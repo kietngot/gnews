@@ -2,6 +2,10 @@ package com.innovative.gnews;
 
 import com.innovative.gnews.Titlebar;
 import com.innovative.gnews.R;
+import com.innovative.gnews.feed.NewsCategory;
+import com.innovative.gnews.feed.NewsLoadEvents;
+import com.innovative.gnews.feed.NewsLoader;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
@@ -11,10 +15,13 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
-
+public class MainActivity extends Activity implements NewsLoadEvents {
+	private NewsLoader mNewsLoader = null;
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	
+    	mNewsLoader = new NewsLoader(this);
+    	
         super.onCreate(savedInstanceState);
         final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.activity_main);
@@ -24,6 +31,9 @@ public class MainActivity extends Activity {
 			getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.main_title);
 			Titlebar.InitTitlebar(this, R.string.app_name);
 		}
+		
+		// load news
+		LoadNews();
     }
 
     @Override
@@ -51,4 +61,23 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
     }
+    
+    public void LoadNews()
+    {
+    	if (mNewsLoader==null)
+    		return;
+    	mNewsLoader.loadNewsCategory("http://news.google.com/news?ned=us&topic=h&output=rss");
+    }
+
+	@Override
+	public void loadNewsCategorySuccess(NewsCategory newsCategory) {
+		// TODO: send the UI a message to update the news
+		//newsCategory.mCopyright = newsCategory.mCopyright;
+	}
+
+	@Override
+	public void loadNewsCategoryFailed() {
+		// TODO Auto-generated method stub
+		
+	}
 }

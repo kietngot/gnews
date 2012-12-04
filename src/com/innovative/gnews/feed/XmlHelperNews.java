@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -12,15 +14,17 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.webkit.MimeTypeMap;
+
 
 public class XmlHelperNews extends DefaultHandler {
 	boolean isParsing = false;
-	ImageFeed mTmpImageFeed = null;
-	NewsFeed mNewsFeed = null;
-	ItemFeed mTmpItemFeed = null;
+	NewsCategory mNewsCategory = null;
+	NewsImage mTmpNewsImage = null;
+	NewsItem mTmpNewsItem = null;
 	String mTmpText = "";
 	
-	public NewsFeed ParseNewsFeedFromXmlFile(String xmlFilePath) {
+	public NewsCategory ParseNewsFeedFromXmlFile(String xmlFilePath) {
 		FileInputStream fstream = null;
 		try 
 		{
@@ -36,7 +40,7 @@ public class XmlHelperNews extends DefaultHandler {
 		return null;
 	} //ParseBooksFromXmlFile()
 	
-	public NewsFeed ParseNewsFeedFromXmlString(String xmlString)
+	public NewsCategory ParseNewsFeedFromXmlString(String xmlString)
 	{
 		InputStream inStream = null;
 		try 
@@ -53,7 +57,7 @@ public class XmlHelperNews extends DefaultHandler {
 		return null;
 	} //ParseBooksFromXmlString()
 	
-	public NewsFeed ParseNewsFeedFromXmlStream(InputStream inStream) 
+	public NewsCategory ParseNewsFeedFromXmlStream(InputStream inStream) 
 	{
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		if (inStream==null)
@@ -69,21 +73,21 @@ public class XmlHelperNews extends DefaultHandler {
 		}
 		catch(SAXException se) 
 		{
-			mNewsFeed = null;
+			mNewsCategory = null;
 			se.printStackTrace();
 		}
 		catch(ParserConfigurationException pce) 
 		{
-			mNewsFeed = null;
+			mNewsCategory = null;
 			pce.printStackTrace();
 		}
 		catch (IOException ie) 
 		{
-			mNewsFeed = null;
+			mNewsCategory = null;
 			ie.printStackTrace();
 		}
 		isParsing = false;
-		return mNewsFeed;
+		return mNewsCategory;
 	} //ParseBooksFromXmlStream()
 	
 	int makeInt(String intValueStr)
@@ -101,53 +105,90 @@ public class XmlHelperNews extends DefaultHandler {
 		
 		if(localName.equalsIgnoreCase("channel"))
 		{
-			mTmpItemFeed = null;
-			mTmpImageFeed = null;
-			mNewsFeed = new NewsFeed();
+			mTmpNewsItem = null;
+			mTmpNewsImage = null;
+			mNewsCategory = new NewsCategory();
+			mNewsCategory.mItemFeedMap = new HashMap<String, NewsItem>();
 		}
 		else if(localName.equalsIgnoreCase("image"))
 		{
-			mTmpImageFeed = new ImageFeed();
+			mTmpNewsImage = new NewsImage();
 		}
 		else if(localName.equalsIgnoreCase("item"))
 		{
-			mTmpItemFeed = new ItemFeed();
+			mTmpNewsItem = new NewsItem();
+		}
+		else if (mTmpNewsItem!=null && localName.equalsIgnoreCase("guid"))
+		{
+			String tmpStr = attributes.getValue("isPermaLink");
+			mTmpNewsItem.mIsGuidPermanentLink = tmpStr.equalsIgnoreCase("true");
 		}
 	}
 	
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException 
 	{
-		mTmpText = new String(ch,start,length);
-		mTmpText = mTmpText.trim();
+		String tmpText = new String(ch,start,length);
+		mTmpText += tmpText.trim();
 	}
 	
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException 
 	{
-		if (mNewsFeed==null)
+		if (mNewsCategory==null)
 			return;
-		if (mTmpItemFeed != null)
+		if (mTmpNewsItem != null)
 		{
 			if(localName.equalsIgnoreCase("item")) 
 			{
-				// TODO: Clone this and insert (not just reference)
-				mNewsFeed.mItemFeedMap.put(mTmpItemFeed.mTitle, mTmpItemFeed);
+				// TODO: Copy the mTmpNewsImage (not just reference)
+				mNewsCategory.mItemFeedMap.put(mTmpNewsItem.mTitle, mTmpNewsItem.clone());
+				mTmpNewsItem = null;
 			}
+			else if(localName.equalsIgnoreCase("title"))
+				mTmpNewsItem.mTitle = mTmpText;
+			else if(localName.equalsIgnoreCase("link"))
+				mTmpNewsItem.mLink = mTmpText;
+			else if(localName.equalsIgnoreCase("guid"))
+				mTmpNewsItem.mGuid = mTmpText;
+			else if(localName.equalsIgnoreCase("category"))
+				mTmpNewsItem.mCategory = mTmpText;
+			else if(localName.equalsIgnoreCase("pubDate"))
+				mTmpNewsItem.mPubDate = mTmpText;
+			else if(localName.equalsIgnoreCase("description"))
+				mTmpNewsItem.mThumbImageLink = NewsItem.parseThumbLink(mTmpText);
 		}
-		else if (mTmpImageFeed != null)
+		else if (mTmpNewsImage != null)
 		{
 			if(localName.equalsIgnoreCase("image")) 
 			{
-				mNewsFeed.mItemFeedMap.put(mTmpItemFeed.mTitle, mTmpItemFeed);
+				// TODO: Copy the mTmpNewsImage (not just reference)
+				mNewsCategory.mNewsImage = mTmpNewsImage.clone();
+				mTmpNewsImage = null;
 			}
+			else if(localName.equalsIgnoreCase("title"))
+				mTmpNewsImage.mTitle = mTmpText;
+			else if(localName.equalsIgnoreCase("url"))
+				mTmpNewsImage.mImageUrl = mTmpText;
+			else if(localName.equalsIgnoreCase("link"))
+				mTmpNewsImage.mLink = mTmpText;
 		}
-		else // Main News Feed (i.e., "channel")
+		else // Contents of Main News Feed (i.e., "channel")
 		{
 			if(localName.equalsIgnoreCase("title")) 
-			{
-				mNewsFeed.mTitle = mTmpText;
-			}
+				mNewsCategory.mTitle = mTmpText;
+			else if (localName.equalsIgnoreCase("link"))
+				mNewsCategory.mLink = mTmpText;
+			else if (localName.equalsIgnoreCase("language"))
+				mNewsCategory.mLanguage = mTmpText;
+			else if (localName.equalsIgnoreCase("webMaster"))
+				mNewsCategory.mWebMaster = mTmpText;
+			else if (localName.equalsIgnoreCase("copyright"))
+				mNewsCategory.mCopyright = mTmpText;
+			else if (localName.equalsIgnoreCase("pubDate"))
+				mNewsCategory.mPubDate = mTmpText;
+			else if (localName.equalsIgnoreCase("lastBuildDate"))
+				mNewsCategory.mLastBuildDate = mTmpText;
 		}
 		// reset text
 		mTmpText = "";
