@@ -1,6 +1,6 @@
 package com.innovative.gnews.feed;
 
-public class ItemFeed {
+public class ItemFeed implements Cloneable {
 	public String mTitle;
 	public String mLink;
 	public String mGuid;
