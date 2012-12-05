@@ -4,54 +4,37 @@
     android:layout_width="fill_parent"
     android:layout_height="70dp"
     android:background="@color/titlebackgroundcolor" >
-
-    <RelativeLayout
+    <RelativeLayout
         android:id="@+id/rlHome"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
-        android:paddingRight="1dp" 
-        android:layout_marginLeft="14dp" 
-        android:background="@drawable/buttonstyle" >
-        
-        <TextView
-            android:id="@+id/tvArrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/ibLogo"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:text="&lt;"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/themecolor"
-            android:background="@drawable/buttonstyle"
-            android:textSize="26dp"
-            android:textStyle="bold" />
+        android:background="@drawable/buttonstyle"
+        android:paddingRight="1dp" >
 
         <ImageButton
             android:id="@+id/ibLogo"
             android:layout_width="50dp"
             android:layout_height="33dp"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/tvArrow" 
-            android:scaleType="fitCenter"
             android:background="@drawable/buttonstyle"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_list" />
-
         
     </RelativeLayout>
-
+
     <TextView
         android:id="@+id/tvAppTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
         android:layout_toRightOf="@+id/rlHome"
         android:background="@android:color/transparent"
-        android:text="@string/app_name"
+        android:text="@string/category_topnews"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/themecolor"
+        android:textSize="28dp"
         android:textStyle="normal" />
 
 </RelativeLayout>

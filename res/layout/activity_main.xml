@@ -1,7 +1,29 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:background="@color/themebackgroundcolor">
+    android:layout_height="match_parent"
+    android:background="@color/themebackgroundcolor" >
+    
+    <RelativeLayout
+        android:id="@+id/rlFooter"
+        android:layout_height="50dp"
+        android:layout_width="match_parent"
+        android:background="@color/themecolor" 
+        android:layout_alignParentBottom="true"
+        >
+        
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/lvNewsItemsList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/rlFooter"
+        android:layout_alignParentLeft="true"
+        android:background="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@android:color/transparent" >
+
+    </ListView>
 
 </RelativeLayout>

@@ -1,50 +1,77 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent" 
+    android:paddingTop="8dp" 
+    android:paddingBottom="8dp" >
 
-   	<ImageView
-            android:id="@+id/ivNewsItemThumb"
-            android:layout_width="60dp"
-        	android:layout_height="60dp"
-        	android:paddingLeft="3dp"
-        	android:layout_marginLeft="0dp"
-            android:src="@android:drawable/ic_menu_gallery" 
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"/>
-   	
-    <RelativeLayout
-        android:id="@+id/rlNewsItemTexts"
-            android:layout_width="fill_parent"
-        	android:layout_height="80dp"
-        	android:paddingLeft="3dp"
-        	android:paddingRight="3dp"
-        	android:layout_marginRight="0dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true" 
-            android:layout_toRightOf="@+id/ivNewsItemThumb"
-            android:background="@color/themebackgroundcolor" >
-        
-        	<TextView
-		        android:id="@+id/tvNewsItemTitle"
-		        android:layout_width="fill_parent"
-		        android:layout_height="30dip"
-		        android:textColor="@color/themecolor"
-		        android:background="@android:color/transparent"
-		        android:textSize="16sp"
-		        android:textStyle="bold" 
-		        android:paddingLeft="1dp" 
-		        android:paddingTop="3dp"/>
-        	
-        	<TextView
-		        android:id="@+id/tvNewsItemDatePublished"
-		        android:layout_width="fill_parent"
-		        android:layout_height="30dip"
-		        android:textColor="@color/themecolor"
-		        android:background="@android:color/transparent"
-		        android:textSize="12sp"
-		        android:textStyle="bold" 
-		        android:paddingLeft="1dp" 
-		        android:paddingTop="3dp"/>
-    </RelativeLayout>
+    <RelativeLayout 
+        android:layout_width="wrap_content"
+	    android:layout_height="wrap_content" >
+	    <RelativeLayout
+	        android:id="@+id/rlNewsItemThumb"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_centerVertical="true"
+	        android:layout_marginRight="0dp"
+	        android:layout_toRightOf="@+id/ivNewsItemThumb"
+	        android:background="@android:color/transparent"
+	        android:paddingLeft="3dp"
+	        android:paddingRight="3dp" >
+	
+	        <ImageView
+	            android:id="@+id/ivNewsItemThumb"
+	            android:layout_width="60dp"
+	            android:layout_height="60dp"
+	            android:layout_alignParentLeft="true"
+	            android:layout_centerVertical="true"
+	            android:layout_marginLeft="0dp"
+	            android:paddingLeft="3dp"
+	            android:src="@android:drawable/ic_menu_gallery" />
+	    </RelativeLayout>
+	
+	    <RelativeLayout
+	        android:id="@+id/rlNewsItemTexts"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_centerVertical="true"
+	        android:layout_marginRight="3dp"
+	        android:layout_toRightOf="@+id/rlNewsItemThumb"
+	        android:background="@android:color/transparent"
+	        android:paddingLeft="3dp"
+	        android:paddingRight="3dp" >
+	
+	        <TextView
+	            android:id="@+id/tvNewsItemTitle"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:layout_alignParentTop="true"
+	            android:background="@android:color/transparent"
+	            android:gravity="center_vertical"
+	            android:paddingLeft="1dp"
+	            android:paddingTop="0dp"
+	            android:text="Item Title"
+	            android:textColor="@color/themecolor"
+	            android:textSize="16dp"
+	            android:textStyle="normal" />
+	    </RelativeLayout>
+		
+	    <TextView
+	        android:id="@+id/tvNewsItemDatePublished"
+	        android:layout_width="fill_parent"
+	        android:layout_height="30dp"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/rlNewsItemThumb"
+	        android:background="@android:color/transparent"
+	        android:gravity="center_vertical"
+	        android:paddingLeft="1dp"
+	        android:paddingTop="3dp"
+	        android:text="Item Date"
+	        android:textColor="@color/themecolor"
+	        android:textSize="12dp"
+	        android:textStyle="bold"
+	        android:visibility="gone" />
+	</RelativeLayout>
 </RelativeLayout>

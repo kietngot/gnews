@@ -19,9 +19,9 @@ public class NewsItemListAdapter extends ArrayAdapter<NewsItem>
 	public static final int KEY_LINK = 1001;
 	private LayoutInflater mLayoutx = null;
 	private int mResource = 0;
-	public NewsItemListAdapter(Context context, int resource, int textViewResourceId, List<NewsItem> objects) 
+	public NewsItemListAdapter(Context context, int resource, List<NewsItem> objects) 
 	{
-		super(context, resource, textViewResourceId, objects);
+		super(context, resource, objects);
 		mResource = resource;
 		mLayoutx = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 	}
@@ -30,23 +30,27 @@ public class NewsItemListAdapter extends ArrayAdapter<NewsItem>
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
 		NewsItem newsItem = getItem(position);
-		
+			
 		if(null == convertView)
              convertView = mLayoutx.inflate(mResource, null);
 		
+		if (newsItem==null)
+			return convertView;
+		
 		ImageView ivThumbImage = (ImageView) convertView.findViewById(R.id.ivNewsItemThumb);
-		if (ivThumbImage!=null)
-			ivThumbImage.setImageURI(Uri.parse(newsItem.mThumbImageLink));
+		if (ivThumbImage!=null && newsItem.mThumbBitmap!=null)
+			ivThumbImage.setImageBitmap(newsItem.mThumbBitmap);
+			//ivThumbImage.setImageURI(Uri.parse(newsItem.mThumbImageLink));
 		
 		TextView tvNewsItemTitle = (TextView) convertView.findViewById(R.id.tvNewsItemTitle);
 		if (tvNewsItemTitle!=null)
 			tvNewsItemTitle.setText(newsItem.mTitle);
 		
 		TextView tvNewsItemDatePublished = (TextView) convertView.findViewById(R.id.tvNewsItemDatePublished);
-		if (tvNewsItemTitle!=null)
-			tvNewsItemTitle.setText(newsItem.mPubDate);
+		if (tvNewsItemDatePublished!=null)
+			tvNewsItemDatePublished.setText(newsItem.mPubDate);
 		
-		convertView.setTag(KEY_LINK, newsItem.mLink);
+		//convertView.setTag(KEY_LINK, newsItem.mLink);
 		return convertView;
 	}
 

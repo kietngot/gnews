@@ -24,6 +24,10 @@ public class XmlHelperNews extends DefaultHandler {
 	NewsItem mTmpNewsItem = null;
 	String mTmpText = "";
 	
+	XmlHelperNews()
+	{
+	}
+	
 	public NewsCategory ParseNewsFeedFromXmlFile(String xmlFilePath) {
 		FileInputStream fstream = null;
 		try 
@@ -62,6 +66,7 @@ public class XmlHelperNews extends DefaultHandler {
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		if (inStream==null)
 			return null;
+		
 		try
 		{
 			isParsing = true;
