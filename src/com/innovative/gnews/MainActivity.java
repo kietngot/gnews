@@ -11,6 +11,7 @@ import com.innovative.gnews.feed.NewsLoader;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -159,8 +160,9 @@ public class MainActivity extends Activity implements NewsLoadEvents {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) 
 		{
 			NewsItem item = (NewsItem)mNewsItemsList.getItemAtPosition(position);
-			
-			// TODO: Get the item....
+			Intent pageIntent = new Intent(MainActivity.this, NewsPageActivity.class);
+			pageIntent.putExtra("NewsPageURL", new String(item.mLink));
+			startActivityForResult(pageIntent, 1);
 		}
 
 	}; //OnItemClickListener

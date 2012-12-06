@@ -53,7 +53,7 @@
 	            android:paddingLeft="1dp"
 	            android:paddingTop="0dp"
 	            android:text="Item Title"
-	            android:textColor="@color/themecolor"
+	            android:textColor="@color/themetextcolor"
 	            android:textSize="16dp"
 	            android:textStyle="normal" />
 	    </RelativeLayout>
@@ -69,7 +69,7 @@
 	        android:paddingLeft="1dp"
 	        android:paddingTop="3dp"
 	        android:text="Item Date"
-	        android:textColor="@color/themecolor"
+	        android:textColor="@color/themetextcolor"
 	        android:textSize="12dp"
 	        android:textStyle="bold"
 	        android:visibility="gone" />

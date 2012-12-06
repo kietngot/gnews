@@ -33,7 +33,7 @@
         android:background="@android:color/transparent"
         android:text="@string/category_topnews"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/themecolor"
+        android:textColor="@color/themebasecolor"
         android:textSize="28dp"
         android:textStyle="normal" />
 

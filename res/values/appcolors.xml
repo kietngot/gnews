@@ -7,10 +7,13 @@
 	<color name="black">#000000</color>
 	<color name="darkgray">#777777</color>
 	<color name="titlebackgroundcolor">#ffffff</color>
-	<color name="themecolor">#00aceb</color>
-	<color name="themebackgroundcolor">#ffffff</color>
 	<color name="titletextcolor">#ffffff</color>
 	<color name="pressedcolor">#acc5d7</color>
 	<color name="transparent">#cce5f7</color>
 	<color name="semitransparent">#9ebcda</color>
+	
+	<!-- Theme colors -->
+	<color name="themebasecolor">#00aceb</color>
+	<color name="themebackgroundcolor">#ffffff</color>
+	<color name="themetextcolor">#555555</color>
 </resources>
