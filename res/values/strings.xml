@@ -4,7 +4,8 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_exit">Exit</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="loading">Loading</string>
-    <string name="category_topnews">Top News</string>
+    <string name="loading">Loading&#8230;</string>
+    <string name="nonetwork">No internet connection</string>
+    <string name="category_topnews">Top news</string>
     <string name="category_technews">Technology</string>
 </resources>

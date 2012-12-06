@@ -1,8 +1,7 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/themebackgroundcolor" >
+    android:background="@color/themebackgroundcolor" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Titlebar for this view -->
     <!-- 	<RelativeLayout
@@ -62,4 +61,18 @@
         android:layout_alignParentBottom="true"
         android:background="@color/themebasecolor" >
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvPageLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@color/themebasecolor"
+        android:padding="10dp"
+        android:text="@string/loading"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/themebackgroundcolor"
+        android:textSize="26dp" />
+
 </RelativeLayout>

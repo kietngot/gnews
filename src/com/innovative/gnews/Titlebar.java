@@ -13,7 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class Titlebar {
-	private static ImageButton m_btnHome = null;
+	private static TextView m_tvMenuShowHide = null;
+	private static ImageButton m_ibMenuImg = null;
 	private static TextView m_tvTitle = null;
 	private static Context m_context = null;
 	private static Activity m_activity = null;
@@ -25,7 +26,8 @@ public class Titlebar {
 	
 	public static void Reset()
 	{
-		m_btnHome = null;
+		m_tvMenuShowHide = null;
+		m_ibMenuImg = null;
 		m_tvTitle = null;
 		m_context = null;
 		m_activity = null;
@@ -35,20 +37,22 @@ public class Titlebar {
 		tvPageUrl = null;
 	}
 	
-	public static void InitTitlebar(Activity activity, int titleStringID)
+	public static void InitTitlebar(Activity activity, String titleString)
 	{
 		// Resets the values of previous activity 
 		Reset();
 		m_activity = activity;
 		m_context = m_activity.getApplicationContext();
 		
-        m_btnHome = (ImageButton) activity.findViewById(R.id.ibLogo);
-        if (m_btnHome!=null)
-        	m_btnHome.setOnClickListener(mBtnClickListener);
+		m_ibMenuImg = (ImageButton) activity.findViewById(R.id.ibMenuImg);
+        if (m_ibMenuImg!=null)
+        	m_ibMenuImg.setOnClickListener(mBtnClickListener);
         
         m_tvTitle = (TextView) activity.findViewById(R.id.tvAppTitle);
         if (m_tvTitle!=null)
-        	m_tvTitle.setText(titleStringID);
+        	m_tvTitle.setText(titleString);
+        
+        m_tvMenuShowHide = (TextView) activity.findViewById(R.id.tvMenuShowHide);
 	}
 	
 	public static void InitTitlebar(Activity activity, String urlString, Bitmap favIcon)
@@ -77,8 +81,16 @@ public class Titlebar {
         	Context appContext = m_context;
         	switch (id)
         	{
-        	case R.id.ibLogo: //m_btnHome
+        	case R.id.ibMenuImg: //m_btnHome
 	        	{
+	        		if (m_tvMenuShowHide!=null)
+	        		{
+	        			String showHideText = (String) m_tvMenuShowHide.getText();
+	        			if(showHideText.equalsIgnoreCase("<"))
+	                		m_tvMenuShowHide.setText(">");
+	        			else
+	        				m_tvMenuShowHide.setText("<");
+	        		}
 	        		Toast.makeText(appContext, "Home", Toast.LENGTH_SHORT).show();
 	        	}
         		break;

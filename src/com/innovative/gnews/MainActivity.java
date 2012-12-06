@@ -8,6 +8,11 @@ import com.innovative.gnews.feed.NewsCategory;
 import com.innovative.gnews.feed.NewsItem;
 import com.innovative.gnews.feed.NewsLoadEvents;
 import com.innovative.gnews.feed.NewsLoader;
+import com.innovative.gnews.utils.Utils;
+
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo.State;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
@@ -20,13 +25,17 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity implements NewsLoadEvents {
 	private NewsLoader mNewsLoader = null;
 	private NewsItemListAdapter mNewsItemsAdapter = null;
+	private TextView tvNewsItemsLoading = null;
+	
 	ListView mNewsItemsList = null;
 	List<NewsItem> mNewsList = null;
+	String mTitleText = "";
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,12 +46,19 @@ public class MainActivity extends Activity implements NewsLoadEvents {
         final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.activity_main);
         
-	     // We can access custom title elements only after setting FEATURE_CUSTOM_TITLE
+        mTitleText = "Gnews"; //getString(R.string.loading);
+        
+	    // We can access custom title elements only after setting FEATURE_CUSTOM_TITLE
 		if ( customTitleSupported ) {
 			getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.main_title);
-			Titlebar.InitTitlebar(this, R.string.loading);
 		}
 		
+		tvNewsItemsLoading = (TextView)findViewById(R.id.tvNewsItemsLoading);
+		if (tvNewsItemsLoading!=null)
+		{
+			tvNewsItemsLoading.setText(R.string.loading);
+			tvNewsItemsLoading.setVisibility(View.VISIBLE);
+		}
 		mNewsItemsList = (ListView) findViewById(R.id.lvNewsItemsList);
 		mNewsList = new ArrayList<NewsItem>();
 		mNewsItemsAdapter = new NewsItemListAdapter(this, R.layout.newsitem_view, mNewsList);
@@ -54,6 +70,20 @@ public class MainActivity extends Activity implements NewsLoadEvents {
 		// load news
 		LoadNews();
     }
+    
+    @Override
+    public void onStart() {
+    	super.onStart();
+    	Titlebar.InitTitlebar(this, mTitleText);
+    }
+    
+    @Override
+	public void onResume() 
+	{
+		super.onResume();
+		if (!Utils.checkInternetConnection(this, true, tvNewsItemsLoading))
+			return;
+	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -83,6 +113,20 @@ public class MainActivity extends Activity implements NewsLoadEvents {
     
     public void LoadNews()
     {
+    	if (!Utils.isNetworkConnected(this))
+    	{
+    		if (tvNewsItemsLoading!=null)
+    		{
+    			tvNewsItemsLoading.setText(R.string.nonetwork);
+				tvNewsItemsLoading.setVisibility(View.VISIBLE);
+    		}
+    		else
+    		{
+				Toast.makeText(this, R.string.nonetwork, Toast.LENGTH_SHORT).show();
+    		}
+    		return;
+    	}
+    	
     	if (mNewsLoader==null)
     		return;
     	mNewsLoader.loadNewsCategory("http://news.google.com/news?ned=us&topic=h&output=rss");
@@ -97,8 +141,11 @@ public class MainActivity extends Activity implements NewsLoadEvents {
 			public void run() {
 				// TODO Auto-generated method stub
 				displayNews(newsCat);
-				Titlebar.InitTitlebar(MainActivity.this, R.string.category_topnews);
+				mTitleText = getString(R.string.category_topnews);
+				Titlebar.InitTitlebar(MainActivity.this, mTitleText);
 				mNewsLoader.loadThumbs();
+				if (tvNewsItemsLoading!=null)
+					tvNewsItemsLoading.setVisibility(View.GONE);
 			}
 		});
 	}
@@ -106,7 +153,8 @@ public class MainActivity extends Activity implements NewsLoadEvents {
 	@Override
 	public void loadNewsCategoryFailed() {
 		// TODO Auto-generated method stub
-		
+		if (tvNewsItemsLoading!=null)
+			tvNewsItemsLoading.setVisibility(View.GONE);
 	}
 	
 	@Override
@@ -132,9 +180,8 @@ public class MainActivity extends Activity implements NewsLoadEvents {
 				}
 			}
 		});
-		
-		
 	}
+	
 	
 	// Presents news category (list of news items) on UI
 	private void displayNews(NewsCategory newsCategory)
@@ -159,6 +206,9 @@ public class MainActivity extends Activity implements NewsLoadEvents {
 
 		public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) 
 		{
+			if (tvNewsItemsLoading!=null)
+				tvNewsItemsLoading.setVisibility(View.GONE);
+			
 			NewsItem item = (NewsItem)mNewsItemsList.getItemAtPosition(position);
 			Intent pageIntent = new Intent(MainActivity.this, NewsPageActivity.class);
 			pageIntent.putExtra("NewsPageURL", new String(item.mLink));

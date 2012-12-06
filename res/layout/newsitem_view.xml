@@ -28,7 +28,7 @@
 	            android:layout_centerVertical="true"
 	            android:layout_marginLeft="0dp"
 	            android:paddingLeft="3dp"
-	            android:src="@android:drawable/ic_menu_gallery" />
+	            android:src="@drawable/ic_noimage" />
 	    </RelativeLayout>
 	
 	    <RelativeLayout

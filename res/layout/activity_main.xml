@@ -22,8 +22,23 @@
         android:layout_alignParentLeft="true"
         android:background="@android:color/transparent"
         android:cacheColorHint="@android:color/transparent"
-        android:divider="@android:color/transparent" >
+        android:divider="@android:color/transparent" 
+        android:listSelector="@drawable/list_selector" 
+        android:drawSelectorOnTop="false" >
 
     </ListView>
+
+    <TextView
+        android:id="@+id/tvNewsItemsLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@color/themebasecolor"
+        android:padding="10dp"
+        android:text="@string/loading"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/themebackgroundcolor"
+        android:textSize="26dp" />
 
 </RelativeLayout>

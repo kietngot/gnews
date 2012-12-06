@@ -1,6 +1,10 @@
 package com.innovative.gnews;
+import com.innovative.gnews.utils.Utils;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -10,11 +14,13 @@ import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.graphics.Bitmap;
 
 public class NewsPageActivity extends Activity {
 	// Controls
 	WebView wvNewsPage = null;
+	TextView tvPageLoading = null;
 	
 	String mNewsPageURL = null;
 	
@@ -24,16 +30,32 @@ public class NewsPageActivity extends Activity {
         final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.activity_newspage);
         
-	     // We can access custom title elements only after setting FEATURE_CUSTOM_TITLE
+        // We can access custom title elements only after setting FEATURE_CUSTOM_TITLE
 		if ( customTitleSupported ) {
 			getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.newpage_title);
 			Titlebar.InitTitlebar(this, getString(R.string.loading), null);
 		}
 		
 		init();
-		loadPage();
-		
     } //onCreate()
+	
+	@Override
+	public void onStart() 
+	{
+		super.onStart();
+		
+		if (!Utils.checkInternetConnection(this, true, tvPageLoading))
+			return;
+		
+		Thread th1 = new Thread(new Runnable() 
+    	{
+            public void run() 
+            {
+            	loadPage();
+            } //run()
+          });
+        th1.start(); //new Thread
+	}
 	
 	private void init() 
 	{
@@ -41,8 +63,12 @@ public class NewsPageActivity extends Activity {
 		if (wvNewsPage==null)
 			return;
 		
-		wvNewsPage.loadData("<html><body><b>Loading...</b></body></html>", "text/html", "UTF-8");
-		wvNewsPage.refreshDrawableState();
+		tvPageLoading = (TextView)findViewById(R.id.tvPageLoading);
+		if (tvPageLoading!=null)
+		{
+			tvPageLoading.setText(R.string.loading);
+			tvPageLoading.setVisibility(View.VISIBLE);
+		}
 		
 		// Get page URL 
 		Bundle extras = getIntent().getExtras();
@@ -67,6 +93,11 @@ public class NewsPageActivity extends Activity {
 					public void run() 
 					{
 						Titlebar.InitTitlebar(NewsPageActivity.this, url, favicon);
+						if (tvPageLoading!=null)
+			    		{
+							tvPageLoading.setText(R.string.loading);
+			    			tvPageLoading.setVisibility(View.VISIBLE);
+			    		}
 					}
 				});
 			}
@@ -74,6 +105,10 @@ public class NewsPageActivity extends Activity {
 	        @Override
 	        public void onPageFinished(WebView view, String url) {
 	            super.onPageFinished(view, url);
+	            if (tvPageLoading!=null)
+	    		{
+	    			tvPageLoading.setVisibility(View.GONE);
+	    		}
 	            //view.refreshDrawableState();
 	        }
 
@@ -81,18 +116,28 @@ public class NewsPageActivity extends Activity {
 	        public void onReceivedSslError(android.webkit.WebView view, android.webkit.SslErrorHandler handler, android.net.http.SslError error)
 	        {
 	        	super.onReceivedSslError(view, handler, error);
+	        	if (tvPageLoading!=null)
+	    		{
+	    			tvPageLoading.setVisibility(View.GONE);
+	    		}
 	        }
 	        
 	        @Override
 	        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) 
 	        {
-	            super.onReceivedError(view, errorCode, description, failingUrl);                 
+	            super.onReceivedError(view, errorCode, description, failingUrl);  
+	            if (tvPageLoading!=null)
+	    		{
+	    			tvPageLoading.setVisibility(View.GONE);
+	    		}
 	        }
 
 	    });
 		
 		wvNewsPage.loadUrl(mNewsPageURL);
 	} //loadPage
+	
+	
 	
 	/*
 	// TODO: Use this when we ad controls to the footer

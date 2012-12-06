@@ -4,22 +4,35 @@
     android:layout_width="fill_parent"
     android:layout_height="70dp"
     android:background="@color/titlebackgroundcolor" >
-    <RelativeLayout
-        android:id="@+id/rlHome"
+
+    <RelativeLayout
+        android:id="@+id/rlMenu"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
+        android:layout_marginLeft="3dp"
         android:background="@drawable/buttonstyle"
         android:paddingRight="1dp" >
-
+
         <ImageButton
-            android:id="@+id/ibLogo"
+            android:id="@+id/ibMenuImg"
             android:layout_width="50dp"
             android:layout_height="33dp"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="2dp"
             android:background="@drawable/buttonstyle"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_list" />
+
+        <TextView
+            android:id="@+id/tvMenuShowHide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="&lt;"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/themebasecolor" />
         
     </RelativeLayout>
 
@@ -29,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/rlHome"
+        android:layout_toRightOf="@+id/rlMenu"
         android:background="@android:color/transparent"
         android:text="@string/category_topnews"
         android:textAppearance="?android:attr/textAppearanceMedium"
