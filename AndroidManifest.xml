@@ -28,6 +28,10 @@
             android:name=".NewsPageActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name=".MenuCategoriesActivity"
+            android:label="@string/app_name" >
+        </activity>
     </application>
 
 </manifest>

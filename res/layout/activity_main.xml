@@ -1,44 +1,52 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/themebackgroundcolor" >
     
-    <RelativeLayout
-        android:id="@+id/rlFooter"
-        android:layout_height="50dp"
+    <RelativeLayout 
+        android:id="@+id/rlMainNewsList"
         android:layout_width="match_parent"
-        android:background="@color/themebasecolor" 
-        android:layout_alignParentBottom="true"
-        >
-        
-    </RelativeLayout>
-
-    <ListView
-        android:id="@+id/lvNewsItemsList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/rlFooter"
-        android:layout_alignParentLeft="true"
-        android:background="@android:color/transparent"
-        android:cacheColorHint="@android:color/transparent"
-        android:divider="@android:color/transparent" 
-        android:listSelector="@drawable/list_selector" 
-        android:drawSelectorOnTop="false" >
+    	android:layout_height="match_parent" >
+    	
+	    <include android:id="@+id/rlMainTitle" layout="@layout/main_title"/>
+	
+	    <ListView
+	        android:id="@+id/lvNewsItemsList"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_above="@+id/rlFooter"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/rlMainTitle"
+	        android:background="@android:color/transparent"
+	        android:cacheColorHint="@android:color/transparent"
+	        android:divider="@android:color/transparent"
+	        android:drawSelectorOnTop="false"
+	        android:listSelector="@drawable/list_selector" >
 
-    </ListView>
-
-    <TextView
-        android:id="@+id/tvNewsItemsLoading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:background="@color/themebasecolor"
-        android:padding="10dp"
-        android:text="@string/loading"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/themebackgroundcolor"
-        android:textSize="26dp" />
-
-</RelativeLayout>
+	    </ListView>
+	    
+	    <RelativeLayout
+	        android:id="@+id/rlFooter"
+	        android:layout_height="50dp"
+	        android:layout_width="match_parent"
+	        android:background="@color/themebasecolor" 
+	        android:layout_alignParentBottom="true" >
+	    </RelativeLayout>
+	    
+	    <TextView
+	        android:id="@+id/tvNewsItemsLoading"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerHorizontal="true"
+	        android:layout_centerVertical="true"
+	        android:background="@color/themebasecolor"
+	        android:padding="10dp"
+	        android:text="@string/loading"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textColor="@color/themebackgroundcolor"
+	        android:textSize="26dp" />
+	</RelativeLayout>
+	
+    <include android:id="@+id/rlMenuCategories" layout="@layout/activity_menu_categories" />
+</FrameLayout>

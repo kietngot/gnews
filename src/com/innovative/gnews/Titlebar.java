@@ -3,16 +3,21 @@ import com.innovative.gnews.R;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.webkit.WebView;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class Titlebar {
+	private static final int CATEGORIES_MENU_WIDTH = 150;
+	private static final int MENU_ACTIVITY_REQUEST_CODE = 2001;
+	
 	private static TextView m_tvMenuShowHide = null;
 	private static ImageButton m_ibMenuImg = null;
 	private static TextView m_tvTitle = null;
@@ -23,6 +28,9 @@ public class Titlebar {
 	private static ImageButton ibNewsList = null;
 	private static ImageView ivFavIcon = null;
 	private static TextView tvPageUrl = null;
+	
+	private static RelativeLayout rlMenuCategories = null;
+	private static RelativeLayout rlMainNewsList = null;
 	
 	public static void Reset()
 	{
@@ -35,6 +43,9 @@ public class Titlebar {
 		ibNewsList = null;
 		ivFavIcon = null;
 		tvPageUrl = null;
+		
+		rlMenuCategories = null;
+		rlMainNewsList = null;
 	}
 	
 	public static void InitTitlebar(Activity activity, String titleString)
@@ -53,6 +64,12 @@ public class Titlebar {
         	m_tvTitle.setText(titleString);
         
         m_tvMenuShowHide = (TextView) activity.findViewById(R.id.tvMenuShowHide);
+        
+        rlMenuCategories = (RelativeLayout) m_activity.findViewById(R.id.rlMenuCategories);
+		rlMainNewsList = (RelativeLayout) m_activity.findViewById(R.id.rlMainNewsList);
+		
+		// Initialize main news list screen and the categories menu sizes.
+		showCategoriesMenu(false);
 	}
 	
 	public static void InitTitlebar(Activity activity, String urlString, Bitmap favIcon)
@@ -74,6 +91,57 @@ public class Titlebar {
 		if (tvPageUrl!=null)
 			tvPageUrl.setText(urlString);
 	}
+	
+	
+	public static void setTitle(String titleString)
+	{
+		m_tvTitle = (TextView) m_activity.findViewById(R.id.tvAppTitle);
+        if (m_tvTitle!=null)
+        	m_tvTitle.setText(titleString);
+	} //setTitle()
+	
+	public static void showCategoriesMenu(boolean bShow)
+	{
+		if (rlMenuCategories==null || rlMainNewsList==null)
+			return;
+		rlMenuCategories.getLayoutParams().width = CATEGORIES_MENU_WIDTH;
+		if (bShow)
+		{
+			rlMenuCategories.setVisibility(View.VISIBLE);
+			if (m_tvMenuShowHide!=null)
+				m_tvMenuShowHide.setText("<");
+			
+			rlMainNewsList.layout(LayoutParams.MATCH_PARENT, 
+					rlMainNewsList.getTop(), 
+					rlMainNewsList.getRight(), 
+					rlMainNewsList.getBottom());
+			
+			rlMainNewsList.layout(CATEGORIES_MENU_WIDTH, 
+					rlMainNewsList.getTop(), 
+					rlMainNewsList.getRight()+CATEGORIES_MENU_WIDTH, 
+					rlMainNewsList.getBottom());
+		}
+		else
+		{
+			rlMenuCategories.setVisibility(View.INVISIBLE);
+			if (m_tvMenuShowHide!=null)
+				m_tvMenuShowHide.setText(">");
+			
+			rlMainNewsList.layout(LayoutParams.MATCH_PARENT, 
+					rlMainNewsList.getTop(), 
+					rlMainNewsList.getRight(), 
+					rlMainNewsList.getBottom());
+		}
+	} //showCategoriesMenu()
+	
+	public static void toggleCategoriesMenu()
+	{
+		if (rlMenuCategories==null || rlMainNewsList==null)
+			return;
+		
+		boolean bShow = (rlMenuCategories.getVisibility()!=View.VISIBLE);
+		showCategoriesMenu(bShow);
+	} //toggleCategoriesMenu()
 		
 	static private OnClickListener mBtnClickListener = new OnClickListener() {
         public void onClick(View v) {
@@ -83,15 +151,8 @@ public class Titlebar {
         	{
         	case R.id.ibMenuImg: //m_btnHome
 	        	{
-	        		if (m_tvMenuShowHide!=null)
-	        		{
-	        			String showHideText = (String) m_tvMenuShowHide.getText();
-	        			if(showHideText.equalsIgnoreCase("<"))
-	                		m_tvMenuShowHide.setText(">");
-	        			else
-	        				m_tvMenuShowHide.setText("<");
-	        		}
-	        		Toast.makeText(appContext, "Home", Toast.LENGTH_SHORT).show();
+	        		toggleCategoriesMenu();
+	        		//Toast.makeText(appContext, "Home", Toast.LENGTH_SHORT).show();
 	        	}
         		break;
         		

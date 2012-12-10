@@ -16,4 +16,5 @@
 	<color name="themebasecolor">#00aceb</color>
 	<color name="themebackgroundcolor">#ffffff</color>
 	<color name="themetextcolor">#555555</color>
+	<color name="themesidemenubackcolor">#cccceb</color>
 </resources>
