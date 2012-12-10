@@ -3,15 +3,16 @@
     android:id="@+id/RelativeLayout01"
     android:layout_width="fill_parent"
     android:layout_height="70dp"
-    android:background="@color/titlebackgroundcolor" >
-
+    android:background="@color/themebackgroundcolor" >
+
     <RelativeLayout
         android:id="@+id/rlMenu"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="3dp"
-        android:background="@drawable/buttonstyle"
+        android:background="@drawable/buttonstyle" 
         android:paddingRight="1dp" >
 
         <ImageButton
@@ -20,7 +21,7 @@
             android:layout_height="33dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="2dp"
-            android:background="@drawable/buttonstyle"
+            android:background="@color/themebackgroundcolor" 
             android:scaleType="fitCenter"
             android:src="@drawable/ic_list" />
 
@@ -32,18 +33,21 @@
             android:layout_centerVertical="true"
             android:text=">"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/themebasecolor" />
+            android:textColor="@color/themebasecolor" 
+            android:background="@color/themebackgroundcolor" />
         
     </RelativeLayout>
-
+
     <TextView
         android:id="@+id/tvAppTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/rlMenu"
-        android:background="@android:color/transparent"
+        android:background="@color/themebackgroundcolor"
+        android:gravity="center_vertical"
         android:text="@string/category_topnews"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/themebasecolor"

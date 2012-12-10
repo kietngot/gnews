@@ -4,12 +4,18 @@
     android:layout_height="match_parent"
     android:background="@color/themebackgroundcolor" >
     
+    <include android:id="@+id/rlMenuCategories" layout="@layout/activity_menu_categories" />
+    
     <RelativeLayout 
         android:id="@+id/rlMainNewsList"
         android:layout_width="match_parent"
-    	android:layout_height="match_parent" >
+    	android:layout_height="match_parent" 
+    	android:background="@color/themebackgroundcolor" >
     	
-	    <include android:id="@+id/rlMainTitle" layout="@layout/main_title"/>
+	    <include 
+	        android:id="@+id/rlMainTitle" 
+	        layout="@layout/main_title" 
+	        android:background="@color/themebackgroundcolor" />
 	
 	    <ListView
 	        android:id="@+id/lvNewsItemsList"
@@ -47,6 +53,4 @@
 	        android:textColor="@color/themebackgroundcolor"
 	        android:textSize="26dp" />
 	</RelativeLayout>
-	
-    <include android:id="@+id/rlMenuCategories" layout="@layout/activity_menu_categories" />
 </FrameLayout>

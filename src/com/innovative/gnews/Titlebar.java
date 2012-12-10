@@ -10,6 +10,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,9 +56,9 @@ public class Titlebar {
 		m_activity = activity;
 		m_context = m_activity.getApplicationContext();
 		
-		m_ibMenuImg = (ImageButton) activity.findViewById(R.id.ibMenuImg);
-        if (m_ibMenuImg!=null)
-        	m_ibMenuImg.setOnClickListener(mBtnClickListener);
+		//m_ibMenuImg = (ImageButton) activity.findViewById(R.id.ibMenuImg);
+        //if (m_ibMenuImg!=null)
+        	//m_ibMenuImg.setOnClickListener(mBtnClickListener);
         
         m_tvTitle = (TextView) activity.findViewById(R.id.tvAppTitle);
         if (m_tvTitle!=null)
@@ -69,7 +70,7 @@ public class Titlebar {
 		rlMainNewsList = (RelativeLayout) m_activity.findViewById(R.id.rlMainNewsList);
 		
 		// Initialize main news list screen and the categories menu sizes.
-		showCategoriesMenu(false);
+		//showCategoriesMenu(false);
 	}
 	
 	public static void InitTitlebar(Activity activity, String urlString, Bitmap favIcon)
@@ -95,9 +96,12 @@ public class Titlebar {
 	
 	public static void setTitle(String titleString)
 	{
-		m_tvTitle = (TextView) m_activity.findViewById(R.id.tvAppTitle);
-        if (m_tvTitle!=null)
-        	m_tvTitle.setText(titleString);
+		if (m_activity!=null)
+		{
+			m_tvTitle = (TextView) m_activity.findViewById(R.id.tvAppTitle);
+	        if (m_tvTitle!=null)
+	        	m_tvTitle.setText(titleString);
+		}
 	} //setTitle()
 	
 	public static void showCategoriesMenu(boolean bShow)

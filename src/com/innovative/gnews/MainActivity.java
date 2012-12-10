@@ -34,25 +34,115 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 
-public class MainActivity extends Activity implements NewsLoadEvents {
+public class MainActivity extends Activity implements NewsLoadEvents, AnimationListener {
+	
+	static class AnimParams {
+        int left, right, top, bottom;
+
+        void init(int left, int top, int right, int bottom) 
+        {
+            this.left = left;
+            this.top = top;
+            this.right = right;
+            this.bottom = bottom;
+        }
+    }
+	
 	private NewsLoader mNewsLoader = null;
 	private NewsItemListAdapter mNewsItemsAdapter = null;
 	private TextView tvNewsItemsLoading = null;
 	private Spinner spnCountryFeed = null;
 	private TextView tvCountrySpinnerLbl = null;
-	
+	private ImageButton ibMenuImg = null;
+	private TextView tvTitle = null;
 	
 	ListView mNewsItemsList = null;
 	List<NewsItem> mNewsList = null;
 	String mTitleText = "";
 	String mCountry = "USA";
+	
+	// Animation stuff
+	AnimParams animParams = new AnimParams();
+	RelativeLayout rlMenuCategories = null;
+	RelativeLayout rlMainNewsList = null;
+	boolean menuOut = false;
+	
+	@Override
+	public void onAnimationEnd(Animation arg0)
+	{
+		menuOut = !menuOut;
+        if (!menuOut)
+            rlMenuCategories.setVisibility(View.INVISIBLE);
+        layoutApp(menuOut);
+	}
+
+	@Override
+	public void onAnimationRepeat(Animation arg0) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void onAnimationStart(Animation arg0) {
+		// TODO Auto-generated method stub
+	}
+	
+	boolean showOption1 = false;
+	private void animateToggleCategoriesMenu()
+	{
+	    Animation anim;
+        int w = rlMainNewsList.getMeasuredWidth();
+        int h = rlMainNewsList.getMeasuredHeight();
+        int left = (int) (rlMainNewsList.getMeasuredWidth() * 0.8);
+        
+        if (!menuOut) 
+        {
+            //anim = AnimationUtils.loadAnimation(this, R.anim.push_right_in);
+            anim = new TranslateAnimation(0, left, 0, 0);
+            rlMenuCategories.setVisibility(View.VISIBLE);
+            animParams.init(left, 0, left + w, h);
+        }
+        else 
+        {
+            anim = new TranslateAnimation(0, -left, 0, 0);
+            rlMenuCategories.setVisibility(View.VISIBLE);
+            animParams.init(0, 0, w, h);
+        }
+        
+        anim.setDuration(500);
+        anim.setAnimationListener(this);
+        //Tell the animation to stay as it ended (we are going to set the rlMainNewsList.layout first than remove this property)
+        anim.setFillAfter(true);
+
+
+        // Only use fillEnabled and fillAfter if we don't call layout ourselves.
+        // We need to do the layout ourselves and not use fillEnabled and fillAfter because when the anim is finished
+        // although the View appears to have moved, it is actually just a drawing effect and the View hasn't moved.
+        // Therefore clicking on the screen where the button appears does not work, but clicking where the View *was* does
+        // work.
+        // anim.setFillEnabled(true);
+        // anim.setFillAfter(true);
+
+        rlMainNewsList.startAnimation(anim);
+	}
+	
+	void layoutApp(boolean menuOut) {
+        rlMainNewsList.layout(animParams.left, animParams.top, animParams.right, animParams.bottom);
+        //Now that we've set the app.layout property we can clear the animation, flicker avoided :)
+        rlMainNewsList.clearAnimation();
+    }
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,14 +183,16 @@ public class MainActivity extends Activity implements NewsLoadEvents {
 			tvCountrySpinnerLbl.setOnClickListener(mBtnClickListener);
 		}
 		
-		// Adjust the categories once the layout is created.
-		View v = getWindow().getDecorView().findViewById(android.R.id.content);
-		v.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
-	        @Override
-	        public void onGlobalLayout() {
-	            Titlebar.showCategoriesMenu(false);
-	        }
-	    });
+		ibMenuImg = (ImageButton) findViewById(R.id.ibMenuImg);
+        if (ibMenuImg!=null)
+        	ibMenuImg.setOnClickListener(mBtnClickListener);
+        
+        tvTitle = (TextView) findViewById(R.id.tvAppTitle);
+        if (tvTitle!=null)
+        	tvTitle.setText(mTitleText);
+		
+		rlMenuCategories = (RelativeLayout) findViewById(R.id.rlMenuCategories);
+    	rlMainNewsList = (RelativeLayout) findViewById(R.id.rlMainNewsList);
 		
 		// load news
 		LoadNews();
@@ -108,7 +200,8 @@ public class MainActivity extends Activity implements NewsLoadEvents {
 		loadCountryFeedList();
     }
     
- // Display the topbar notification
+    // Display the toolbar notification
+    // THIS IS FOR FUTURE USE
  	private void showNotification(String text) {
  		Notification n = new Notification();
  				
@@ -137,14 +230,15 @@ public class MainActivity extends Activity implements NewsLoadEvents {
         	int id = v.getId();
         	switch (id)
         	{
+        	case R.id.ibMenuImg: //m_btnHome
+        		animateToggleCategoriesMenu();
+        		break;
+        		
         	case R.id.tvCountrySpinnerLbl:
         		if (tvCountrySpinnerLbl != null)
         		{
-        			showNotification("YAY, got it John!");
-        			//tvCountrySpinnerLbl.setVisibility(View.INVISIBLE);
-        			//spnCountryFeed.performClick();
-        			//spnCountryFeed.setVisibility(View.VISIBLE);
-        			
+        			//showNotification("YAY, got it John!");
+        			spnCountryFeed.performClick();
         		}
         		break;
         	}
@@ -160,7 +254,6 @@ public class MainActivity extends Activity implements NewsLoadEvents {
 	public void onResume() 
 	{
 		super.onResume();
-		Titlebar.InitTitlebar(this, mTitleText);
 		if (!Utils.checkInternetConnection(this, true, tvNewsItemsLoading))
 			return;
 	}
@@ -168,7 +261,7 @@ public class MainActivity extends Activity implements NewsLoadEvents {
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
-        	Titlebar.toggleCategoriesMenu();
+        	animateToggleCategoriesMenu();
         	return true;
         }
         return super.onKeyUp(keyCode, event);
@@ -179,7 +272,6 @@ public class MainActivity extends Activity implements NewsLoadEvents {
         //getMenuInflater().inflate(R.layout.activity_menu_categories, menu);
         return true;
     }
-    
     
     @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -248,6 +340,24 @@ public class MainActivity extends Activity implements NewsLoadEvents {
     		adapter.add(new String("Venezuela"));
     		
     		spnCountryFeed.setAdapter(adapter);
+    		
+    		spnCountryFeed.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    	    	// onItemSelected
+    	    	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+    				final String country = (String)parent.getItemAtPosition(pos);
+    				MainActivity.this.runOnUiThread(new Runnable() {
+    					public void run() {
+    						tvCountrySpinnerLbl.setText(country);
+    						layoutApp(menuOut);
+    					} //OnItemClickListener::onItemSelected::run()
+    				});
+    			} //OnItemClickListener::onItemSelected
+    			
+    	    	// onNothingSelected
+    			public void onNothingSelected(AdapterView<?> arg0) {
+    				// TODO
+    			} //OnItemClickListener::onNothingSelected()
+    		});
     	}
     }
 
@@ -260,7 +370,8 @@ public class MainActivity extends Activity implements NewsLoadEvents {
 			public void run() {
 				displayNews(newsCat);
 				mTitleText = getString(R.string.category_topnews);
-				Titlebar.setTitle(mTitleText);
+				if (tvTitle!=null)
+		        	tvTitle.setText(mTitleText);
 				mNewsLoader.loadThumbs();
 				if (tvNewsItemsLoading!=null)
 					tvNewsItemsLoading.setVisibility(View.GONE);
