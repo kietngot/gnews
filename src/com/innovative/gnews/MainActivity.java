@@ -375,6 +375,9 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 				mNewsLoader.loadThumbs();
 				if (tvNewsItemsLoading!=null)
 					tvNewsItemsLoading.setVisibility(View.GONE);
+				
+				menuOut = false;
+				layoutApp(menuOut);
 			}
 		});
 	}
