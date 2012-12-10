@@ -12,9 +12,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:background="@drawable/buttonstyle" 
-        android:paddingRight="1dp" >
-
+        android:background="@color/themebackgroundcolor" 
+        android:paddingRight="1dp" >
         <ImageButton
             android:id="@+id/ibMenuImg"
             android:layout_width="50dp"
@@ -24,20 +23,9 @@
             android:background="@color/themebackgroundcolor" 
             android:scaleType="fitCenter"
             android:src="@drawable/ic_list" />
-
-        <TextView
-            android:id="@+id/tvMenuShowHide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:text=">"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/themebasecolor" 
-            android:background="@color/themebackgroundcolor" />
         
     </RelativeLayout>
-
+
     <TextView
         android:id="@+id/tvAppTitle"
         android:layout_width="wrap_content"
@@ -51,7 +39,7 @@
         android:text="@string/category_topnews"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/themebasecolor"
-        android:textSize="28dp"
+        android:textSize="22dp"
         android:textStyle="normal" />
 
 </RelativeLayout>

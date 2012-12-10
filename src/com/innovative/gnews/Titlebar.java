@@ -19,7 +19,6 @@ public class Titlebar {
 	private static final int CATEGORIES_MENU_WIDTH = 150;
 	private static final int MENU_ACTIVITY_REQUEST_CODE = 2001;
 	
-	private static TextView m_tvMenuShowHide = null;
 	private static ImageButton m_ibMenuImg = null;
 	private static TextView m_tvTitle = null;
 	private static Context m_context = null;
@@ -35,7 +34,6 @@ public class Titlebar {
 	
 	public static void Reset()
 	{
-		m_tvMenuShowHide = null;
 		m_ibMenuImg = null;
 		m_tvTitle = null;
 		m_context = null;
@@ -64,7 +62,6 @@ public class Titlebar {
         if (m_tvTitle!=null)
         	m_tvTitle.setText(titleString);
         
-        m_tvMenuShowHide = (TextView) activity.findViewById(R.id.tvMenuShowHide);
         
         rlMenuCategories = (RelativeLayout) m_activity.findViewById(R.id.rlMenuCategories);
 		rlMainNewsList = (RelativeLayout) m_activity.findViewById(R.id.rlMainNewsList);
@@ -112,8 +109,6 @@ public class Titlebar {
 		if (bShow)
 		{
 			rlMenuCategories.setVisibility(View.VISIBLE);
-			if (m_tvMenuShowHide!=null)
-				m_tvMenuShowHide.setText("<");
 			
 			rlMainNewsList.layout(LayoutParams.MATCH_PARENT, 
 					rlMainNewsList.getTop(), 
@@ -128,8 +123,6 @@ public class Titlebar {
 		else
 		{
 			rlMenuCategories.setVisibility(View.INVISIBLE);
-			if (m_tvMenuShowHide!=null)
-				m_tvMenuShowHide.setText(">");
 			
 			rlMainNewsList.layout(LayoutParams.MATCH_PARENT, 
 					rlMainNewsList.getTop(), 

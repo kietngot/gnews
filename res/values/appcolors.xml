@@ -17,4 +17,5 @@
 	<color name="themebackgroundcolor">#ffffff</color>
 	<color name="themetextcolor">#555555</color>
 	<color name="themesidemenubackcolor">#2d2d37</color>
+	<color name="themessemitransparentcolor">#2d7f7f7f</color>
 </resources>

@@ -2,41 +2,76 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="250dp"
     android:layout_height="match_parent"
+    android:layout_marginRight="4dp"
     android:background="@color/themesidemenubackcolor"
     android:orientation="vertical"
-    android:paddingTop="0dp"
+    android:paddingBottom="0dp"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
-    android:paddingBottom="0dp"
-    android:layout_marginRight="4dp"
+    android:paddingTop="0dp"
     android:visibility="visible" >
+    
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="30dp"
+        android:padding="2dp"
         android:text="Country:"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="10dp"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/tvCountrySpinnerLbl"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/textView1"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="10dp"
-        android:clickable="true"
-        android:text="USA"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/themebackgroundcolor" />
 
     <Spinner
         android:id="@+id/spnCountryFeedList"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tvCountrySpinnerLbl"
         android:layout_alignParentTop="true"
         android:visibility="invisible" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView1"
+        android:layout_marginTop="19dp" >
+
+        <ListView
+            android:id="@+id/lvPreconfiguredCategories"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="5dp"
+            android:background="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@android:color/transparent"
+            android:drawSelectorOnTop="false"
+            android:listSelector="@drawable/list_selector" >
+
+        </ListView>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvCountrySpinnerLbl"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/relativeLayout1"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="5dp"
+        android:layout_toRightOf="@+id/textView1"
+        android:background="@drawable/buttonstyle"
+        android:clickable="true"
+        android:paddingBottom="2dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="2dp"
+        android:paddingTop="2dp"
+        android:text="USA"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/themebackgroundcolor" />
 
 </RelativeLayout>

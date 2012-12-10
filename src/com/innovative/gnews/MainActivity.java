@@ -1,6 +1,7 @@
 package com.innovative.gnews;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import com.innovative.gnews.Titlebar;
 import com.innovative.gnews.R;
@@ -34,6 +35,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -45,6 +47,24 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
 
 public class MainActivity extends Activity implements NewsLoadEvents, AnimationListener {
+	
+	static class Category
+	{
+		public String mKey;
+		public String mUrlItem;
+		public Category(String key, String urlItem)
+		{
+			mKey = key;
+			mUrlItem = urlItem;
+		}
+		
+		public String toString()
+		{
+			return mKey;
+		}
+	}
+	private HashMap<String, Category> mCountries = null;
+	private HashMap<String, Category> mCategories = null;
 	
 	static class AnimParams {
         int left, right, top, bottom;
@@ -69,7 +89,12 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	ListView mNewsItemsList = null;
 	List<NewsItem> mNewsList = null;
 	String mTitleText = "";
-	String mCountry = "USA";
+	Category mCountry = new Category("USA", "us");
+	Category mCategory = new Category("Top News", "h");
+	Category mCountryLoaded = null;
+	Category mCategoryLoaded = null;
+	ArrayAdapter<Category> mAdapterCountry = null;
+	ArrayAdapter<Category> mAdapterCategory = null;
 	
 	// Animation stuff
 	AnimParams animParams = new AnimParams();
@@ -77,6 +102,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	RelativeLayout rlMainNewsList = null;
 	boolean menuOut = false;
 	protected GestureDetector gestureScanner;
+	
+	ListView lvPreconfiguredCategories = null;
 	
 	@Override
 	public void onAnimationEnd(Animation arg0)
@@ -145,9 +172,17 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
         if (mNewsItemsList!=null)
         {
         	if (menuOut)
+        	{
         		mNewsItemsList.setOnTouchListener(mOnTouchListener);
+        	}
         	else
+        	{
         		mNewsItemsList.setOnTouchListener(null);
+        		if (mCountry.mKey!=mCountryLoaded.mKey || mCategory.mKey!=mCategoryLoaded.mKey)
+        		{
+        			LoadNews();
+        		}
+        	}
         }
     }
 	
@@ -202,10 +237,15 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     	rlMainNewsList = (RelativeLayout) findViewById(R.id.rlMainNewsList);
 		if (rlMainNewsList!=null)
 			rlMainNewsList.setOnTouchListener(mOnTouchListener);
+		
+		lvPreconfiguredCategories = (ListView) findViewById(R.id.lvPreconfiguredCategories);
+		
+		// Menu items
+		loadCountryFeedList();
+		loadCategoriesList();
+				
 		// load news
 		LoadNews();
-		
-		loadCountryFeedList();
     }
     
     // Display the toolbar notification
@@ -233,6 +273,77 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
  		mNotifMan.notify(0, n);
  	}
     
+ 	private void prepareCountriesMap()
+ 	{
+ 		mCountries = new HashMap<String, Category>();
+ 		mCountries.put("USA", new Category("USA", "us")); //ned=us
+		mCountries.put("Argentina", new Category("Argentina", "ar")); //ned=ar
+		mCountries.put("Australia", new Category("Australia", "au")); //ned=au
+		mCountries.put("Austria", new Category("Austria", "at")); //ned=at
+		mCountries.put("Brazil", new Category("Brazil", "br"));
+		mCountries.put("Canada", new Category("Canada", "ca"));
+		mCountries.put("Chile", new Category("Chile", "cl"));
+		mCountries.put("France", new Category("France", "fr"));
+		mCountries.put("Germany", new Category("Germany", "de"));
+		mCountries.put("India", new Category("India", "in"));
+		mCountries.put("Ireland", new Category("Ireland", "ie"));
+		mCountries.put("Italy", new Category("Italy", "it"));
+		mCountries.put("Mexico", new Category("Mexico", "mx"));
+		mCountries.put("Peru", new Category("Peru", "pe"));
+		mCountries.put("Portugal", new Category("Portugal", "pt-PT_pt"));
+		mCountries.put("Russia", new Category("Russia", "ru_ru"));
+		mCountries.put("Spain", new Category("Spain", "es"));
+		mCountries.put("UK", new Category("UK", "uk"));
+		mCountries.put("Venezuela", new Category("Venezuela", "es_ve"));
+		mCountries.put("Venezuela", new Category("Vietnam", "vi_vn"));
+		mCountry = mCountries.get("USA");
+ 	}
+ 	
+ 	private void prepareCategoriesMap()
+ 	{
+ 		mCategories = new HashMap<String, Category>();
+ 		mCategories.put("Top News", new Category("Top News", "h")); //topic=h
+ 		mCategories.put("World", new Category("World", "w")); //topic=w
+ 		mCategories.put("Technology", new Category("Technology", "tc")); //topic=tc
+ 		mCategories.put("Entertainment", new Category("Entertainment", "e")); //topic=e
+ 		mCategories.put("Business", new Category("Business", "b")); //topic=b
+ 		mCategories.put("Health", new Category("Health", "m")); //topic=m
+ 		mCategories.put("Science", new Category("Science", "snc")); //topic=snc
+ 		mCategories.put("Sports", new Category("Sports", "s")); //topic=s
+ 		mCategory = mCategories.get("Top News");
+ 	}
+ 	
+ 	private void loadCategoriesList()
+    {
+ 		prepareCategoriesMap();
+    	if (lvPreconfiguredCategories != null && mCategories!=null)
+    	{
+    		//mAdapterCategory = new ArrayAdapter<Category>(this, android.R.layout.simple_list_item_checked);
+    		mAdapterCategory = new ArrayAdapter<Category>(this, R.layout.categories_item);
+    		for (String key : mCategories.keySet())
+    		{
+    			mAdapterCategory.add(mCategories.get(key));
+    		}
+    		lvPreconfiguredCategories.setAdapter(mAdapterCategory);
+    		lvPreconfiguredCategories.setOnItemClickListener(new AdapterView.OnItemClickListener()
+    		{
+    			public void onItemClick(AdapterView<?> arg0, View arg1, final int position, long arg3) 
+    			{
+    				mCategory = (Category)lvPreconfiguredCategories.getItemAtPosition(position);
+    				MainActivity.this.runOnUiThread(new Runnable() {
+    					public void run() {
+    						lvPreconfiguredCategories.setItemChecked(position, true);
+    						if (mAdapterCategory!=null)
+    							mAdapterCategory.notifyDataSetChanged();
+    	    				animateToggleCategoriesMenu();
+    					} //OnItemClickListener::onItemSelected::run()
+    				});
+    			}
+    		});
+    	}
+    }
+ 	
+	
     private OnClickListener mBtnClickListener = new OnClickListener() {
         public void onClick(View v) {
         	int id = v.getId();
@@ -334,43 +445,67 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     	
     	if (mNewsLoader==null)
     		return;
-    	mNewsLoader.loadNewsCategory("http://news.google.com/news?ned=us&topic=h&output=rss&num=50");
+    	
+    	mNewsItemsAdapter.clear();
+    	mAdapterCategory.notifyDataSetChanged();
+    	if (tvNewsItemsLoading!=null)
+		{
+			tvNewsItemsLoading.setText(R.string.loading);
+			tvNewsItemsLoading.setVisibility(View.VISIBLE);
+		}
+    	
+    	mTitleText = mCategory.toString() + " (" + mCountry.toString() + ")";
+		if (tvTitle!=null)
+        	tvTitle.setText(mTitleText);
+    	
+    	if (mAdapterCountry!=null)
+    	{
+    		int pos = mAdapterCountry.getPosition(mCountry);
+    		spnCountryFeed.setSelection(pos);
+    	}
+    	
+    	if (mAdapterCategory!=null)
+    	{
+    		int pos = mAdapterCategory.getPosition(mCategory);
+    		lvPreconfiguredCategories.setSelection(pos);
+    	}
+    	
+    	
+    	
+    	//mNewsLoader.loadNewsCategory("http://news.google.com/news?ned=us&topic=h&output=rss&num=50");
+    	String url = "http://news.google.com/news?ned=" + mCountry.mUrlItem + "&topic=" + mCategory.mUrlItem + "&output=rss&num=25";
+    	mNewsLoader.loadNewsCategory(url);
+    	mCountryLoaded = new Category(mCountry.mKey, mCountry.mUrlItem);
+		mCategoryLoaded = new Category(mCategory.mKey, mCategory.mUrlItem);
+    	
     }
+    
+    
     
     private void loadCountryFeedList()
     {
+    	prepareCountriesMap();
     	if (spnCountryFeed != null)
     	{
-    		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line);
-    		adapter.add(new String("USA"));
-    		adapter.add(new String("Argentina"));
-    		adapter.add(new String("Australia"));
-    		adapter.add(new String("Austria"));
-    		adapter.add(new String("Brazil"));
-    		adapter.add(new String("Canada"));
-    		adapter.add(new String("Chile"));
-    		adapter.add(new String("France"));
-    		adapter.add(new String("Germany"));
-    		adapter.add(new String("India"));
-    		adapter.add(new String("Ireland"));
-    		adapter.add(new String("Italy"));
-    		adapter.add(new String("Mexico"));
-    		adapter.add(new String("Peru"));
-    		adapter.add(new String("Portugal"));
-    		adapter.add(new String("Russia"));
-    		adapter.add(new String("Spain"));
-    		adapter.add(new String("UK"));
-    		adapter.add(new String("Venezuela"));
+    		mAdapterCountry = new ArrayAdapter<Category>(this, android.R.layout.simple_dropdown_item_1line);
+    		for (String key : mCountries.keySet())
+    		{
+    			mAdapterCountry.add(mCountries.get(key));
+    		}
+    		spnCountryFeed.setAdapter(mAdapterCountry);
     		
-    		spnCountryFeed.setAdapter(adapter);
-    		
-    		spnCountryFeed.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    		spnCountryFeed.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() 
+    		{
     	    	// onItemSelected
-    	    	public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-    				final String country = (String)parent.getItemAtPosition(pos);
-    				MainActivity.this.runOnUiThread(new Runnable() {
-    					public void run() {
-    						tvCountrySpinnerLbl.setText(country);
+    	    	public void onItemSelected(final AdapterView<?> parent, View view, final int pos, long id) 
+    	    	{
+    				MainActivity.this.runOnUiThread(new Runnable() 
+    				{
+    					public void run() 
+    					{
+    						mCountry = (Category)parent.getItemAtPosition(pos);
+    						tvCountrySpinnerLbl.setText(mCountry.toString());
+    						//mAdapterCountry.notifyDataSetChanged();
     						layoutApp(menuOut);
     					} //OnItemClickListener::onItemSelected::run()
     				});
@@ -392,7 +527,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		MainActivity.this.runOnUiThread(new Runnable() {
 			public void run() {
 				displayNews(newsCat);
-				mTitleText = getString(R.string.category_topnews);
+				mTitleText = mCategory.toString() + " (" + mCountry.toString() + ")";
 				if (tvTitle!=null)
 		        	tvTitle.setText(mTitleText);
 				mNewsLoader.loadThumbs();
