@@ -22,29 +22,26 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 
 public class MainActivity extends Activity implements NewsLoadEvents, AnimationListener {
@@ -79,6 +76,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	RelativeLayout rlMenuCategories = null;
 	RelativeLayout rlMainNewsList = null;
 	boolean menuOut = false;
+	protected GestureDetector gestureScanner;
 	
 	@Override
 	public void onAnimationEnd(Animation arg0)
@@ -142,6 +140,15 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
         rlMainNewsList.layout(animParams.left, animParams.top, animParams.right, animParams.bottom);
         //Now that we've set the app.layout property we can clear the animation, flicker avoided :)
         rlMainNewsList.clearAnimation();
+        
+        // This is to enable the user to touch on listview to close the menu.
+        if (mNewsItemsList!=null)
+        {
+        	if (menuOut)
+        		mNewsItemsList.setOnTouchListener(mOnTouchListener);
+        	else
+        		mNewsItemsList.setOnTouchListener(null);
+        }
     }
 	
     @Override
@@ -193,7 +200,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		
 		rlMenuCategories = (RelativeLayout) findViewById(R.id.rlMenuCategories);
     	rlMainNewsList = (RelativeLayout) findViewById(R.id.rlMainNewsList);
-		
+		if (rlMainNewsList!=null)
+			rlMainNewsList.setOnTouchListener(mOnTouchListener);
 		// load news
 		LoadNews();
 		
@@ -266,6 +274,21 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
         }
         return super.onKeyUp(keyCode, event);
     }
+    
+    public OnTouchListener mOnTouchListener = new View.OnTouchListener() {
+        public boolean onTouch(View v, MotionEvent event) 
+        {
+        	if (menuOut)
+				animateToggleCategoriesMenu();
+        	else
+        	{
+        		return true;
+        	}
+        	return true;
+            //return gestureScanner.onTouchEvent(event);
+        }
+    };
+    
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
