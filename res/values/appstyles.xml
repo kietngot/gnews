@@ -1,6 +1,6 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="InnovativeWindowTitleBackground">
-        <item name="android:background">@android:drawable/title_bar</item>
+        <item name="android:background">@color/themebackgroundcolor</item>
         <item name="android:padding">0px</item>
     </style>
     

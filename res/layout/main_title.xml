@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/RelativeLayout01"
     android:layout_width="fill_parent"
     android:layout_height="70dp"
-    android:background="@color/themebackgroundcolor" >
-
+    android:background="@color/themebackgroundcolor" 
+    android:duplicateParentState="true" >
+	
+    <ImageButton
+		android:id="@+id/ibMenuImg"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerVertical="true"
+		android:layout_alignParentLeft="true"
+		android:layout_marginLeft="0dp"
+		android:layout_marginRight="0dp"
+		android:background="@drawable/menubtn" 
+		android:scaleType="fitCenter" />
+    <!-- 
     <RelativeLayout
         android:id="@+id/rlMenu"
         android:layout_width="wrap_content"
@@ -16,15 +27,15 @@
         android:paddingRight="1dp" >
         <ImageButton
             android:id="@+id/ibMenuImg"
-            android:layout_width="50dp"
-            android:layout_height="33dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="2dp"
-            android:background="@color/themebackgroundcolor" 
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_list" />
+            android:background="@drawable/menubtn" 
+            android:scaleType="fitCenter" />
         
     </RelativeLayout>
+    -->
 
     <TextView
         android:id="@+id/tvAppTitle"
@@ -33,7 +44,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/rlMenu"
+        android:layout_toRightOf="@+id/ibMenuImg"
         android:background="@color/themebackgroundcolor"
         android:gravity="center_vertical"
         android:text="@string/category_topnews"

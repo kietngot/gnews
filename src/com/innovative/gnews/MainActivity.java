@@ -84,6 +84,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	private Spinner spnCountryFeed = null;
 	private TextView tvCountrySpinnerLbl = null;
 	private ImageButton ibMenuImg = null;
+	private RelativeLayout rlMainTitle = null;
 	private TextView tvTitle = null;
 	
 	ListView mNewsItemsList = null;
@@ -130,7 +131,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	    Animation anim;
         int w = rlMainNewsList.getMeasuredWidth();
         int h = rlMainNewsList.getMeasuredHeight();
-        int left = (int) (rlMainNewsList.getMeasuredWidth() * 0.8);
+        int left = (int) (rlMenuCategories.getMeasuredWidth());
         
         if (!menuOut) 
         {
@@ -225,7 +226,11 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 			tvCountrySpinnerLbl.setOnClickListener(mBtnClickListener);
 		}
 		
-		ibMenuImg = (ImageButton) findViewById(R.id.ibMenuImg);
+		rlMainTitle = (RelativeLayout) findViewById(R.id.rlMainTitle);
+        if (rlMainTitle!=null)
+        	rlMainTitle.setOnClickListener(mBtnClickListener);
+		
+        ibMenuImg = (ImageButton) findViewById(R.id.ibMenuImg);
         if (ibMenuImg!=null)
         	ibMenuImg.setOnClickListener(mBtnClickListener);
         
@@ -349,7 +354,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
         	int id = v.getId();
         	switch (id)
         	{
-        	case R.id.ibMenuImg: //m_btnHome
+        	case R.id.rlMainTitle: //m_btnHome
+        	case R.id.ibMenuImg:
         		animateToggleCategoriesMenu();
         		break;
         		

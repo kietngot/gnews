@@ -37,13 +37,12 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/textView1"
         android:layout_marginTop="19dp" >
-
+
         <ListView
             android:id="@+id/lvPreconfiguredCategories"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="5dp"
+            android:layout_above="@+id/rlCustomCategoryAdd"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="5dp"
             android:background="@android:color/transparent"
@@ -53,8 +52,43 @@
             android:listSelector="@drawable/list_selector" >
 
         </ListView>
+
+		<RelativeLayout
+		    android:id="@+id/rlCustomCategoryAdd"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentBottom="true"
+		    android:layout_alignParentRight="true" >
+
+		    <TextView
+		        android:id="@+id/textView2"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignLeft="@+id/lvPreconfiguredCategories"
+		        android:layout_centerVertical="true"
+		        android:layout_marginLeft="15dp"
+		        android:text="Add category:"
+		        android:textAppearance="?android:attr/textAppearanceLarge"
+		        android:textColor="@color/themebasecolor" />
+
+		    <ImageButton
+		        android:id="@+id/imageButton1"
+		        android:layout_width="56dp"
+		        android:layout_height="50dp"
+		        android:layout_alignParentRight="true"
+		        android:layout_alignParentTop="true"
+		        android:layout_centerVertical="true"
+		        android:layout_marginBottom="2dp"
+		        android:layout_marginRight="2dp"
+		        android:layout_marginTop="2dp"
+		        android:cropToPadding="false"
+		        
+				android:background="@drawable/addcategorybtn" />
+
+		</RelativeLayout>
+
     </RelativeLayout>
-
+
     <TextView
         android:id="@+id/tvCountrySpinnerLbl"
         android:layout_width="130dp"

@@ -11,7 +11,7 @@
            android:layout_alignParentLeft="true"
            android:layout_centerVertical="true"
            android:layout_marginLeft="3dp"
-           android:background="@drawable/buttonstyle"
+           android:background="@color/themebackgroundcolor"
            android:padding="10dp"
            android:src="@drawable/ic_back" />
 
