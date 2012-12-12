@@ -6,16 +6,15 @@
 
        <ImageButton
            android:id="@+id/ibNewsList"
-           android:layout_width="32dp"
-           android:layout_height="32dp"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
            android:layout_alignParentLeft="true"
            android:layout_centerVertical="true"
-           android:layout_marginLeft="3dp"
-           android:background="@color/themebackgroundcolor"
-           android:padding="10dp"
-           android:src="@drawable/ic_back" />
-
-    <ImageView
+           android:layout_marginLeft="0dp"
+           android:background="@drawable/backbutton"
+           android:padding="10dp"/>
+       
+       <ImageView
         android:id="@+id/ibPageFavIcon"
         android:layout_width="20dp"
         android:layout_height="20dp"
@@ -24,8 +23,8 @@
         android:layout_toRightOf="@+id/ibNewsList"
         android:background="@color/themebackgroundcolor"
         android:src="@drawable/ic_webkit" />
-
-    <TextView
+       
+       <TextView
         android:id="@+id/tvPageUrl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

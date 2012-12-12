@@ -114,6 +114,8 @@ public class NewsLoader {
                     		if (mLoadEvents!=null)
                     			mLoadEvents.thumbLoaded(newsItem.mTitle, newsItem.mThumbBitmap);
                     	}
+                    	if (mLoadEvents!=null)
+                			mLoadEvents.allThumbsLoaded();
                     }
             	}
             	catch (Exception ex)

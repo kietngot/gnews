@@ -41,8 +41,9 @@ public class NewsItem implements Cloneable {
 	
 	// Loads thumb in a thread
 	public void loadThumbImage() 
-	{ 
-		if (mThumbImageLink==null)
+	{
+		mThumbBitmap = null;
+		if (mThumbImageLink==null || mThumbImageLink.isEmpty())
 			return;
 		try
     	{
@@ -57,7 +58,7 @@ public class NewsItem implements Cloneable {
     	}
     	catch (Exception ex)
     	{
-    		;
+    		mThumbBitmap = null;
     	}
     } 
 	

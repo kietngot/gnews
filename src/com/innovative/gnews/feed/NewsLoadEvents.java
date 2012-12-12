@@ -6,4 +6,5 @@ public interface NewsLoadEvents {
 	void loadNewsCategorySuccess(NewsCategory newsCategory);
 	void loadNewsCategoryFailed();
 	void thumbLoaded(String itemTitle, Bitmap thumb);
+	void allThumbsLoaded();
 }

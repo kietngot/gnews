@@ -1,13 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- touch down -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:state_pressed="false"
+        android:drawable="@android:color/transparent" 
+        android:color="@color/themebasecolor" />
+    
     <item
+        android:state_pressed="true" 
+        android:state_focused="true" 
+        android:state_checked="true" 
+        android:state_selected="true" 
         android:drawable="@color/themebasecolor"
-        android:state_pressed="true"/>
-    <!-- selected -->
+        android:color="@color/themebackgroundcolor" />
+    
     <item
-        android:drawable="@android:color/transparent"
-        android:state_selected="true"
-        android:state_focused="false"
-        android:state_pressed="false"/>
+        android:state_pressed="true" 
+        android:drawable="@color/themebasecolor"
+        android:color="@color/themebackgroundcolor" />
+    
+    <item
+        android:state_focused="true" 
+        android:drawable="@color/themebasecolor"
+        android:color="@color/themebackgroundcolor" />
+    
+    <item
+        android:state_checked="true" 
+        android:drawable="@color/themebasecolor"
+        android:color="@color/themebackgroundcolor" />
+    
+    <item
+        android:state_selected="true" 
+        android:drawable="@color/themebasecolor"
+        android:color="@color/themebackgroundcolor" />
 </selector>

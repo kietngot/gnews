@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -164,27 +165,32 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
         rlMainNewsList.startAnimation(anim);
 	}
 	
-	void layoutApp(boolean menuOut) {
+	void layoutApp(boolean menuOut) 
+	{
+		// this happens when not initialized.
+		if (rlMainNewsList==null || mNewsItemsList==null || mCountry==null || mCountryLoaded==null || 
+				mCategories==null || mCategory==null || mCategoryLoaded==null)
+		{
+			return;
+		}
+		
         rlMainNewsList.layout(animParams.left, animParams.top, animParams.right, animParams.bottom);
         //Now that we've set the app.layout property we can clear the animation, flicker avoided :)
         rlMainNewsList.clearAnimation();
         
         // This is to enable the user to touch on listview to close the menu.
-        if (mNewsItemsList!=null)
-        {
-        	if (menuOut)
-        	{
-        		mNewsItemsList.setOnTouchListener(mOnTouchListener);
-        	}
-        	else
-        	{
-        		mNewsItemsList.setOnTouchListener(null);
-        		if (mCountry.mKey!=mCountryLoaded.mKey || mCategory.mKey!=mCategoryLoaded.mKey)
-        		{
-        			LoadNews();
-        		}
-        	}
-        }
+        if (menuOut)
+    	{
+    		mNewsItemsList.setOnTouchListener(mOnTouchListener);
+    	}
+    	else
+    	{
+    		mNewsItemsList.setOnTouchListener(null);
+    		if (mCountry.mKey!=mCountryLoaded.mKey || mCategory.mKey!=mCategoryLoaded.mKey)
+    		{
+    			LoadNews();
+    		}
+    	}
     }
 	
     @Override
@@ -208,8 +214,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		mNewsList = new ArrayList<NewsItem>();
 		mNewsItemsAdapter = new NewsItemListAdapter(this, R.layout.newsitem_view, mNewsList);
 		mNewsItemsList.setAdapter(mNewsItemsAdapter);
-		mNewsItemsList.setAdapter(mNewsItemsAdapter);
 		mNewsItemsList.setClickable(true);
+		mNewsItemsList.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 		mNewsItemsList.setOnItemClickListener(mListItemClickListener);
 		
 		// Categories controls
@@ -329,6 +335,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     		{
     			mAdapterCategory.add(mCategories.get(key));
     		}
+    		mAdapterCategory.setNotifyOnChange(true);
     		lvPreconfiguredCategories.setAdapter(mAdapterCategory);
     		lvPreconfiguredCategories.setOnItemClickListener(new AdapterView.OnItemClickListener()
     		{
@@ -338,13 +345,22 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     				MainActivity.this.runOnUiThread(new Runnable() {
     					public void run() {
     						lvPreconfiguredCategories.setItemChecked(position, true);
-    						if (mAdapterCategory!=null)
-    							mAdapterCategory.notifyDataSetChanged();
+    						
+    						// TODO: Not sure why I put notifyDataSetChanged here, it is causing the news screen  
+    						//	to come back to full mode automatically, before animateToggleCategoriesMenu.
+    						// Now it seems to OK.
+    						
+    						//if (mAdapterCategory!=null)
+    							//mAdapterCategory.notifyDataSetChanged();
     	    				animateToggleCategoriesMenu();
     					} //OnItemClickListener::onItemSelected::run()
     				});
     			}
     		});
+    		lvPreconfiguredCategories.setSelector(R.drawable.list_selector);
+    		lvPreconfiguredCategories.setSelected(true);
+    		lvPreconfiguredCategories.setSelection(0);
+    		layoutApp(menuOut);
     	}
     }
  	
@@ -467,13 +483,15 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     	if (mAdapterCountry!=null)
     	{
     		int pos = mAdapterCountry.getPosition(mCountry);
-    		spnCountryFeed.setSelection(pos);
+    		if (pos>0)
+    			spnCountryFeed.setSelection(pos);
     	}
     	
     	if (mAdapterCategory!=null)
     	{
     		int pos = mAdapterCategory.getPosition(mCategory);
-    		lvPreconfiguredCategories.setSelection(pos);
+    		if (pos>0)
+    			lvPreconfiguredCategories.setSelection(pos);
     	}
     	
     	
@@ -493,7 +511,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     	prepareCountriesMap();
     	if (spnCountryFeed != null)
     	{
-    		mAdapterCountry = new ArrayAdapter<Category>(this, android.R.layout.simple_dropdown_item_1line);
+    		mAdapterCountry = new ArrayAdapter<Category>(this, R.layout.countries_spinner_item);
     		for (String key : mCountries.keySet())
     		{
     			mAdapterCountry.add(mCountries.get(key));
@@ -534,35 +552,37 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 			public void run() {
 				displayNews(newsCat);
 				mTitleText = mCategory.toString() + " (" + mCountry.toString() + ")";
-				if (tvTitle!=null)
-		        	tvTitle.setText(mTitleText);
 				mNewsLoader.loadThumbs();
 				if (tvNewsItemsLoading!=null)
-					tvNewsItemsLoading.setVisibility(View.GONE);
-				
-				menuOut = false;
-				layoutApp(menuOut);
+					tvNewsItemsLoading.setVisibility(View.INVISIBLE);
 			}
 		});
 	}
 
 	@Override
 	public void loadNewsCategoryFailed() {
-		// TODO Auto-generated method stub
-		if (tvNewsItemsLoading!=null)
-			tvNewsItemsLoading.setVisibility(View.GONE);
+		MainActivity.this.runOnUiThread(new Runnable() {
+			public void run() {
+				if (tvNewsItemsLoading!=null)
+					tvNewsItemsLoading.setVisibility(View.GONE);
+			}
+		});
 	}
 	
 	@Override
 	public void thumbLoaded(final String itemTitle, final Bitmap thumb)
 	{
+		if (thumb==null)
+			return;
+		// TODO: The update in this function seems to be unnecessary!
 		MainActivity.this.runOnUiThread(new Runnable() {
 			public void run() {
 				if (mNewsItemsList!=null && mNewsItemsAdapter!=null)
 				{
-					for (int i=0; i<mNewsItemsAdapter.getCount(); i++)
+					int count = mNewsItemsAdapter.getCount();
+					for (int i=0; i<count; i++)
 					{
-						NewsItem item = (NewsItem)mNewsItemsList.getAdapter().getItem(i);
+						NewsItem item = (NewsItem)mNewsItemsAdapter.getItem(i);
 						if (item.mTitle==itemTitle)
 						{
 							item.mThumbBitmap = thumb;
@@ -575,6 +595,20 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		});
 	}
 	
+	@Override
+	public void allThumbsLoaded()
+	{
+		MainActivity.this.runOnUiThread(new Runnable() {
+			public void run() {
+				int count = mNewsItemsList.getCount();
+				if (count>0)
+				{
+					mNewsItemsList.setSelection(count - 1);
+					mNewsItemsList.smoothScrollToPosition(0);
+				}
+			}
+		});
+	}
 	
 	// Presents news category (list of news items) on UI
 	private void displayNews(NewsCategory newsCategory)
@@ -589,6 +623,17 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		if (newsList!=null)
 		{
 			mNewsItemsAdapter = new NewsItemListAdapter(this, R.layout.newsitem_view, newsList);
+			updateNewsList();
+			menuOut = false;
+			layoutApp(menuOut);
+		}
+	}
+	
+	// No loading, just setting the adapter
+	private void updateNewsList()
+	{
+		if (mNewsItemsList!=null && mNewsItemsAdapter!=null)
+		{
 			mNewsItemsList.setAdapter(mNewsItemsAdapter);
 			mNewsItemsList.setClickable(true);
 			mNewsItemsList.setOnItemClickListener(mListItemClickListener);

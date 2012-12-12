@@ -8,7 +8,7 @@
     
     <RelativeLayout 
         android:id="@+id/rlMainNewsList"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
     	android:layout_height="match_parent" 
     	android:background="@color/themebackgroundcolor" >
     	
@@ -16,10 +16,10 @@
 	        android:id="@+id/rlMainTitle" 
 	        layout="@layout/main_title" 
 	        android:background="@color/themebackgroundcolor" />
-	
+	    
 	    <ListView
 	        android:id="@+id/lvNewsItemsList"
-	        android:layout_width="match_parent"
+	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_above="@+id/rlFooter"
 	        android:layout_alignParentLeft="true"
@@ -28,7 +28,8 @@
 	        android:cacheColorHint="@android:color/transparent"
 	        android:divider="@android:color/transparent"
 	        android:drawSelectorOnTop="false"
-	        android:listSelector="@drawable/list_selector" >
+	        android:listSelector="@drawable/list_selector" 
+	        android:choiceMode="singleChoice" >
 
 	    </ListView>
 	    
@@ -51,6 +52,6 @@
 	        android:text="@string/loading"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
 	        android:textColor="@color/themebackgroundcolor"
-	        android:textSize="26dp" />
+	        android:textSize="20dp" />
 	</RelativeLayout>
 </FrameLayout>
