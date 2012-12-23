@@ -23,6 +23,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -134,6 +135,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
         int h = rlMainNewsList.getMeasuredHeight();
         int left = (int) (rlMenuCategories.getMeasuredWidth());
         
+        menuOut = (rlMainNewsList.getLeft()>0);
         if (!menuOut) 
         {
             //anim = AnimationUtils.loadAnimation(this, R.anim.push_right_in);
@@ -552,7 +554,6 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 			public void run() {
 				displayNews(newsCat);
 				mTitleText = mCategory.toString() + " (" + mCountry.toString() + ")";
-				mNewsLoader.loadThumbs();
 				if (tvNewsItemsLoading!=null)
 					tvNewsItemsLoading.setVisibility(View.INVISIBLE);
 			}
@@ -572,8 +573,6 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	@Override
 	public void thumbLoaded(final String itemTitle, final Bitmap thumb)
 	{
-		if (thumb==null)
-			return;
 		// TODO: The update in this function seems to be unnecessary!
 		MainActivity.this.runOnUiThread(new Runnable() {
 			public void run() {
@@ -585,7 +584,15 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 						NewsItem item = (NewsItem)mNewsItemsAdapter.getItem(i);
 						if (item.mTitle==itemTitle)
 						{
-							item.mThumbBitmap = thumb;
+							if (thumb!=null)
+							{
+								item.mThumbBitmap = thumb;
+							}
+							else
+							{
+								BitmapDrawable d = (BitmapDrawable)getResources().getDrawable(R.drawable.ic_noimage);
+								item.mThumbBitmap = ((BitmapDrawable)d).getBitmap();
+							}
 							mNewsItemsAdapter.notifyDataSetChanged();
 							break;
 						}

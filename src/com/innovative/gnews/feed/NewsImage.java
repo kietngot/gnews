@@ -5,20 +5,18 @@ public class NewsImage implements Cloneable {
 	public String mImageUrl; //<url>
 	public String mLink;
 	
+	@Override
 	public NewsImage clone()
-    {
-		try
-	    {
-			return (NewsImage)super.clone();
-	    }
-		catch( CloneNotSupportedException e )
+	{
+		NewsImage retImage = null;
+		try 
 		{
-			;
+			retImage = (NewsImage) super.clone();
 		}
-		catch (Exception ex)
+		catch (CloneNotSupportedException e) 
 		{
-			;
+			retImage = null;
 		}
-		return null;
-    } //clone()
+		return retImage;
+	} //clone()
 }

@@ -1,13 +1,5 @@
 package com.innovative.gnews.feed;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 public class NewsItem implements Cloneable {
 	public String mTitle = null;
@@ -30,52 +22,36 @@ public class NewsItem implements Cloneable {
 		String startSearchStr = "<img src=\"";
 		String endSearchStr = "\"";
 		int startIndex = description.indexOf(startSearchStr);
+		if (startIndex<0)
+			return null;
+		
 		startIndex += startSearchStr.length();
 		description = description.substring(startIndex);
 		int endIndex = description.indexOf(endSearchStr);
+		if (endIndex<0)
+			return null;
 		//endIndex += startSearchStr.length();
 		thumbLink = description.substring(0, endIndex);
 		thumbLink = thumbLink.replace("//", "http://");
 		return thumbLink;
 	} //getThumbLink()
 	
-	// Loads thumb in a thread
-	public void loadThumbImage() 
-	{
-		mThumbBitmap = null;
-		if (mThumbImageLink==null || mThumbImageLink.isEmpty())
-			return;
-		try
-    	{
-            URL aURL = new URL(mThumbImageLink); 
-            URLConnection conn = aURL.openConnection(); 
-            conn.connect(); 
-            InputStream is = conn.getInputStream(); 
-            BufferedInputStream bis = new BufferedInputStream(is); 
-            mThumbBitmap = BitmapFactory.decodeStream(bis); 
-            bis.close(); 
-            is.close();
-    	}
-    	catch (Exception ex)
-    	{
-    		mThumbBitmap = null;
-    	}
-    } 
 	
 	public NewsItem clone()
     {
+		NewsItem newsItem = null;
 		try
 	    {
-			return (NewsItem)super.clone();
+			newsItem = (NewsItem)super.clone();
 	    }
 		catch( CloneNotSupportedException e )
 		{
-			;
+			newsItem = null;
 		}
 		catch (Exception ex)
 		{
-			;
+			newsItem = null;
 		}
-		return null;
+		return newsItem;
     } //clone()
 }

@@ -4,11 +4,13 @@ import com.innovative.gnews.utils.Utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
@@ -21,6 +23,11 @@ public class NewsPageActivity extends Activity {
 	// Controls
 	WebView wvNewsPage = null;
 	TextView tvPageLoading = null;
+	
+	ImageButton ibBrowserBack = null;
+	ImageButton ibBrowserForward = null;
+	ImageButton ibBrowserRefresh = null;
+	ImageButton ibBrowserJavascript = null;
 	
 	String mNewsPageURL = null;
 	
@@ -70,6 +77,7 @@ public class NewsPageActivity extends Activity {
 			tvPageLoading.setVisibility(View.VISIBLE);
 		}
 		
+		// Get preferences
 		// Get page URL 
 		Bundle extras = getIntent().getExtras();
 		if (extras!=null) 
@@ -77,7 +85,68 @@ public class NewsPageActivity extends Activity {
 		
 		if (mNewsPageURL!=null)
 			Titlebar.InitTitlebar(this, mNewsPageURL, null);
+		
+		// Buttons and listeners
+		ibBrowserBack = (ImageButton)findViewById(R.id.ibBrowserBack);
+		if (ibBrowserBack!=null)
+			ibBrowserBack.setOnClickListener(mBtnClickListener);
+		
+		ibBrowserForward = (ImageButton)findViewById(R.id.ibBrowserForward);
+		if (ibBrowserForward!=null)
+			ibBrowserForward.setOnClickListener(mBtnClickListener);
+		
+		ibBrowserRefresh = (ImageButton)findViewById(R.id.ibBrowserRefresh);
+		if (ibBrowserRefresh!=null)
+			ibBrowserRefresh.setOnClickListener(mBtnClickListener);
+		
+		ibBrowserJavascript = (ImageButton)findViewById(R.id.ibBrowserJavascript);
+		if (ibBrowserJavascript!=null)
+			ibBrowserJavascript.setOnClickListener(mBtnClickListener);
+		
+		WebSettings webSettings = wvNewsPage.getSettings();
+		webSettings.setJavaScriptEnabled(AppSettings.JavascriptEnabled);
+		if (AppSettings.JavascriptEnabled)
+			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_browser_javascript_yes));
+		else
+			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_browser_javascript_no));
+		
 	} //init()
+	
+	private OnClickListener mBtnClickListener = new OnClickListener() {
+        public void onClick(View v) {
+        	int id = v.getId();
+        	switch (id)
+        	{
+        	case R.id.ibBrowserBack: //m_btnHome
+        		if (wvNewsPage!=null)
+        			wvNewsPage.goBack();
+        		break;
+        		
+        	case R.id.ibBrowserForward:
+        		if (wvNewsPage!=null)
+        			wvNewsPage.goForward();
+        		break;
+        		
+        	case R.id.ibBrowserRefresh:
+        		if (wvNewsPage!=null)
+        		{
+        			//wvNewsPage.loadData("", "text/html", null);
+        			wvNewsPage.reload();
+        		}
+        		break;
+        		
+        	case R.id.ibBrowserJavascript:
+        		WebSettings webSettings = wvNewsPage.getSettings();
+        		AppSettings.JavascriptEnabled = !webSettings.getJavaScriptEnabled();
+        		webSettings.setJavaScriptEnabled(AppSettings.JavascriptEnabled);
+        		if (AppSettings.JavascriptEnabled)
+        			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_browser_javascript_yes));
+        		else
+        			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_browser_javascript_no));
+        		break;
+        	}
+        }
+    }; //mBtnClickListener
 	
 	private void loadPage()
 	{

@@ -60,19 +60,64 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:background="@color/themebasecolor" >
+
+        <ImageButton
+            android:id="@+id/ibBrowserForward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:layout_toRightOf="@+id/ibBrowserBack"
+            android:background="@drawable/forwardbrowserbutton" />
+
+        <ImageButton
+            android:id="@+id/ibBrowserRefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:layout_toRightOf="@+id/ibBrowserForward"
+            android:background="@drawable/refreshbrowserbutton" />
+
+        <ImageButton
+            android:id="@+id/ibBrowserBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/backbrowserbutton" />
+
+        <ImageButton
+            android:id="@+id/ibBrowserJavascript"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16dp"
+            android:layout_toRightOf="@+id/ibBrowserRefresh"
+            android:background="@drawable/ic_browser_javascript_no" />
+
     </RelativeLayout>
 
     <TextView
         android:id="@+id/tvPageLoading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
         android:background="@color/themebasecolor"
-        android:padding="10dp"
+        android:gravity="center"
+        android:paddingBottom="4dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="4dp"
         android:text="@string/loading"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/themebackgroundcolor"
-        android:textSize="26dp" />
+        android:textSize="16dp"
+        android:typeface="serif"
+        android:width="200dp" />
 
 </RelativeLayout>

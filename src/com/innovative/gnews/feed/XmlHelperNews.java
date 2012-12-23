@@ -18,17 +18,17 @@ import android.webkit.MimeTypeMap;
 
 
 public class XmlHelperNews extends DefaultHandler {
-	boolean isParsing = false;
-	NewsCategory mNewsCategory = null;
-	NewsImage mTmpNewsImage = null;
-	NewsItem mTmpNewsItem = null;
-	String mTmpText = "";
+	private NewsCategory mNewsCategory = null;
+	
+	private NewsImage mTmpNewsImage = null;
+	private NewsItem mTmpNewsItem = null;
+	private String mTmpText = "";
 	
 	XmlHelperNews()
 	{
 	}
 	
-	public NewsCategory ParseNewsFeedFromXmlFile(String xmlFilePath) {
+	public NewsCategory parseNewsFeedFromXmlFile(String xmlFilePath) {
 		FileInputStream fstream = null;
 		try 
 		{
@@ -40,11 +40,11 @@ public class XmlHelperNews extends DefaultHandler {
 			e1.printStackTrace();
 		}
 		if (fstream!=null)
-			return ParseNewsFeedFromXmlStream(fstream);
+			return parseNewsFeedFromXmlStream(fstream);
 		return null;
-	} //ParseBooksFromXmlFile()
+	} //parseBooksFromXmlFile()
 	
-	public NewsCategory ParseNewsFeedFromXmlString(String xmlString)
+	public NewsCategory parseNewsFeedFromXmlString(String xmlString)
 	{
 		InputStream inStream = null;
 		try 
@@ -57,11 +57,11 @@ public class XmlHelperNews extends DefaultHandler {
 			e.printStackTrace();
 		}
 		if (inStream!=null)
-			return ParseNewsFeedFromXmlStream(inStream);
+			return parseNewsFeedFromXmlStream(inStream);
 		return null;
-	} //ParseBooksFromXmlString()
+	} //parseBooksFromXmlString()
 	
-	public NewsCategory ParseNewsFeedFromXmlStream(InputStream inStream) 
+	public NewsCategory parseNewsFeedFromXmlStream(InputStream inStream) 
 	{
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		if (inStream==null)
@@ -69,7 +69,6 @@ public class XmlHelperNews extends DefaultHandler {
 		
 		try
 		{
-			isParsing = true;
 			//get a new instance of parser
 			SAXParser sp = spf.newSAXParser();
 			
@@ -91,9 +90,8 @@ public class XmlHelperNews extends DefaultHandler {
 			mNewsCategory = null;
 			ie.printStackTrace();
 		}
-		isParsing = false;
 		return mNewsCategory;
-	} //ParseBooksFromXmlStream()
+	} //parseBooksFromXmlStream()
 	
 	int makeInt(String intValueStr)
 	{
