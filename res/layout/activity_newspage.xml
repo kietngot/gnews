@@ -108,7 +108,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:background="@color/themebasecolor"
-        android:gravity="center"
+        android:gravity="center_vertical|left"
         android:paddingBottom="4dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -118,6 +118,6 @@
         android:textColor="@color/themebackgroundcolor"
         android:textSize="16dp"
         android:typeface="serif"
-        android:width="200dp" />
+        android:width="100dp" />
 
 </RelativeLayout>

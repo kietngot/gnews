@@ -8,5 +8,5 @@
 	android:paddingLeft="5dp"
 	android:text="Item Title"
 	android:textColor="@drawable/list_selector"
-	android:textSize="24sp"
+	android:textSize="19sp"
 	android:textStyle="normal" />

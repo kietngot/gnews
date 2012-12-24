@@ -1,5 +1,6 @@
 package com.innovative.gnews;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,11 +17,14 @@ import android.net.NetworkInfo.State;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -38,6 +42,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -54,10 +59,19 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	{
 		public String mKey;
 		public String mUrlItem;
+		public boolean mPredefinedCategory = true; // Make this false for personal categories
 		public Category(String key, String urlItem)
 		{
 			mKey = key;
 			mUrlItem = urlItem;
+			mPredefinedCategory = true;
+		}
+		
+		public Category(String key, String urlItem, boolean predefined)
+		{
+			mKey = key;
+			mUrlItem = urlItem;
+			mPredefinedCategory = predefined;
 		}
 		
 		public String toString()
@@ -87,17 +101,19 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	private TextView tvCountrySpinnerLbl = null;
 	private ImageButton ibMenuImg = null;
 	private RelativeLayout rlMainTitle = null;
+	private ImageButton ibPersonalCategoriesAdd = null;
 	private TextView tvTitle = null;
 	
 	ListView mNewsItemsList = null;
 	List<NewsItem> mNewsList = null;
 	String mTitleText = "";
-	Category mCountry = new Category("USA", "us");
-	Category mCategory = new Category("Top News", "h");
+	Category mCountry = null;
+	Category mCategory = null;
 	Category mCountryLoaded = null;
 	Category mCategoryLoaded = null;
 	ArrayAdapter<Category> mAdapterCountry = null;
 	ArrayAdapter<Category> mAdapterCategory = null;
+	ArrayAdapter<Category> mAdapterCategoryPersonal = null;
 	
 	// Animation stuff
 	AnimParams animParams = new AnimParams();
@@ -107,6 +123,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	protected GestureDetector gestureScanner;
 	
 	ListView lvPreconfiguredCategories = null;
+	ListView lvPersonalCategories = null;
+	ImageButton ibRefreshNews = null;
 	
 	@Override
 	public void onAnimationEnd(Animation arg0)
@@ -190,7 +208,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     		mNewsItemsList.setOnTouchListener(null);
     		if (mCountry.mKey!=mCountryLoaded.mKey || mCategory.mKey!=mCategoryLoaded.mKey)
     		{
-    			LoadNews();
+    			loadNews();
     		}
     	}
     }
@@ -205,6 +223,9 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
         setContentView(R.layout.activity_main);
         
         mTitleText = "Gnews"; //getString(R.string.loading);
+        
+        mCountry = AppSettings.CurrentCountry;
+    	mCategory = AppSettings.CurrentCategory;
         
 		tvNewsItemsLoading = (TextView)findViewById(R.id.tvNewsItemsLoading);
 		if (tvNewsItemsLoading!=null)
@@ -242,6 +263,10 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
         if (ibMenuImg!=null)
         	ibMenuImg.setOnClickListener(mBtnClickListener);
         
+        ibPersonalCategoriesAdd = (ImageButton) findViewById(R.id.ibPersonalCategoriesAdd);
+        if (ibPersonalCategoriesAdd!=null)
+        	ibPersonalCategoriesAdd.setOnClickListener(mBtnClickListener);
+        
         tvTitle = (TextView) findViewById(R.id.tvAppTitle);
         if (tvTitle!=null)
         	tvTitle.setText(mTitleText);
@@ -252,13 +277,20 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 			rlMainNewsList.setOnTouchListener(mOnTouchListener);
 		
 		lvPreconfiguredCategories = (ListView) findViewById(R.id.lvPreconfiguredCategories);
+		lvPersonalCategories = (ListView) findViewById(R.id.lvPersonalCategories);
+		
+		ibRefreshNews = (ImageButton) findViewById(R.id.ibRefreshNews);
+		if (ibRefreshNews!=null)
+			ibRefreshNews.setOnClickListener(mBtnClickListener);
 		
 		// Menu items
+		prepareCategoriesMap();
 		loadCountryFeedList();
+		loadPersonalCategories();
 		loadCategoriesList();
 				
 		// load news
-		LoadNews();
+		loadNews();
     }
     
     // Display the toolbar notification
@@ -299,6 +331,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		mCountries.put("France", new Category("France", "fr"));
 		mCountries.put("Germany", new Category("Germany", "de"));
 		mCountries.put("India", new Category("India", "in"));
+		mCountries.put("Pakistan", new Category("Pakistan", "en_pk"));
 		mCountries.put("Ireland", new Category("Ireland", "ie"));
 		mCountries.put("Italy", new Category("Italy", "it"));
 		mCountries.put("Mexico", new Category("Mexico", "mx"));
@@ -309,7 +342,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		mCountries.put("UK", new Category("UK", "uk"));
 		mCountries.put("Venezuela", new Category("Venezuela", "es_ve"));
 		mCountries.put("Venezuela", new Category("Vietnam", "vi_vn"));
-		mCountry = mCountries.get("USA");
+		mCountry = AppSettings.CurrentCountry;
  	}
  	
  	private void prepareCategoriesMap()
@@ -319,46 +352,49 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
  		mCategories.put("World", new Category("World", "w")); //topic=w
  		mCategories.put("Technology", new Category("Technology", "tc")); //topic=tc
  		mCategories.put("Entertainment", new Category("Entertainment", "e")); //topic=e
+ 		mCategories.put("Politics", new Category("Politics", "p")); //topic=p
  		mCategories.put("Business", new Category("Business", "b")); //topic=b
  		mCategories.put("Health", new Category("Health", "m")); //topic=m
  		mCategories.put("Science", new Category("Science", "snc")); //topic=snc
  		mCategories.put("Sports", new Category("Sports", "s")); //topic=s
- 		mCategory = mCategories.get("Top News");
+ 		mCategory = AppSettings.CurrentCategory;
+ 	}
+ 	
+ 	private void loadPersonalCategories()
+ 	{
+ 		mAdapterCategoryPersonal = new ArrayAdapter<Category>(this, R.layout.categories_item);
+ 		for (String key : mCategories.keySet())
+		{
+			Category category = mCategories.get(key);
+			if (!category.mPredefinedCategory)
+				mAdapterCategoryPersonal.add(category);
+		}
+ 		mAdapterCategoryPersonal.setNotifyOnChange(true);
+		lvPersonalCategories.setAdapter(mAdapterCategoryPersonal);
+		lvPersonalCategories.setOnItemClickListener(onPersonalCategoriesClick);
+		lvPersonalCategories.setSelector(R.drawable.list_selector);
+		lvPersonalCategories.setSelected(true);
+		if (mAdapterCategoryPersonal.getCount()>0)
+			lvPersonalCategories.setVisibility(View.VISIBLE);
+		else
+			lvPersonalCategories.setVisibility(View.GONE);
  	}
  	
  	private void loadCategoriesList()
     {
- 		prepareCategoriesMap();
     	if (lvPreconfiguredCategories != null && mCategories!=null)
     	{
     		//mAdapterCategory = new ArrayAdapter<Category>(this, android.R.layout.simple_list_item_checked);
     		mAdapterCategory = new ArrayAdapter<Category>(this, R.layout.categories_item);
     		for (String key : mCategories.keySet())
     		{
-    			mAdapterCategory.add(mCategories.get(key));
+    			Category category = mCategories.get(key);
+    			if (category.mPredefinedCategory)
+    				mAdapterCategory.add(category);
     		}
     		mAdapterCategory.setNotifyOnChange(true);
     		lvPreconfiguredCategories.setAdapter(mAdapterCategory);
-    		lvPreconfiguredCategories.setOnItemClickListener(new AdapterView.OnItemClickListener()
-    		{
-    			public void onItemClick(AdapterView<?> arg0, View arg1, final int position, long arg3) 
-    			{
-    				mCategory = (Category)lvPreconfiguredCategories.getItemAtPosition(position);
-    				MainActivity.this.runOnUiThread(new Runnable() {
-    					public void run() {
-    						lvPreconfiguredCategories.setItemChecked(position, true);
-    						
-    						// TODO: Not sure why I put notifyDataSetChanged here, it is causing the news screen  
-    						//	to come back to full mode automatically, before animateToggleCategoriesMenu.
-    						// Now it seems to OK.
-    						
-    						//if (mAdapterCategory!=null)
-    							//mAdapterCategory.notifyDataSetChanged();
-    	    				animateToggleCategoriesMenu();
-    					} //OnItemClickListener::onItemSelected::run()
-    				});
-    			}
-    		});
+    		lvPreconfiguredCategories.setOnItemClickListener(onCategoriesClick);
     		lvPreconfiguredCategories.setSelector(R.drawable.list_selector);
     		lvPreconfiguredCategories.setSelected(true);
     		lvPreconfiguredCategories.setSelection(0);
@@ -366,6 +402,47 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     	}
     }
  	
+ 	AdapterView.OnItemClickListener onCategoriesClick = new AdapterView.OnItemClickListener()
+	{
+		public void onItemClick(AdapterView<?> arg0, View arg1, final int position, long arg3) 
+		{
+			mCategory = (Category)lvPreconfiguredCategories.getItemAtPosition(position);
+			MainActivity.this.runOnUiThread(new Runnable() {
+				public void run() {
+					lvPreconfiguredCategories.setItemChecked(position, true);
+					
+					// TODO: Not sure why I put notifyDataSetChanged here, it is causing the news screen  
+					//	to come back to full mode automatically, before animateToggleCategoriesMenu.
+					// Now it seems to OK.
+					
+					//if (mAdapterCategory!=null)
+						//mAdapterCategory.notifyDataSetChanged();
+    				animateToggleCategoriesMenu();
+				} //OnItemClickListener::onItemSelected::run()
+			});
+		}
+	};
+	
+	AdapterView.OnItemClickListener onPersonalCategoriesClick = new AdapterView.OnItemClickListener()
+	{
+		public void onItemClick(AdapterView<?> arg0, View arg1, final int position, long arg3) 
+		{
+			mCategory = (Category)lvPersonalCategories.getItemAtPosition(position);
+			MainActivity.this.runOnUiThread(new Runnable() {
+				public void run() {
+					lvPersonalCategories.setItemChecked(position, true);
+					
+					// TODO: Not sure why I put notifyDataSetChanged here, it is causing the news screen  
+					//	to come back to full mode automatically, before animateToggleCategoriesMenu.
+					// Now it seems to OK.
+					
+					//if (mAdapterCategory!=null)
+						//mAdapterCategory.notifyDataSetChanged();
+    				animateToggleCategoriesMenu();
+				} //OnItemClickListener::onItemSelected::run()
+			});
+		}
+	};
 	
     private OnClickListener mBtnClickListener = new OnClickListener() {
         public void onClick(View v) {
@@ -384,9 +461,82 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
         			spnCountryFeed.performClick();
         		}
         		break;
+        		
+        	case R.id.ibPersonalCategoriesAdd:
+	        	{
+	        		if (mCategories!=null)
+	        			doAddPersonalCategory();
+	        	}
+        		break;
+        		
+        	case R.id.ibRefreshNews:
+        		mNewsItemsAdapter.clear();
+        		mNewsItemsAdapter.notifyDataSetChanged();
+        		loadNews();
+        		break;
         	}
         } //onClick
     }; //mBtnClickListener
+    
+    private void doAddPersonalCategory()
+    {
+    	AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Add Personal Category");
+		alert.setMessage("Category Text:");
+		
+		// Set an EditText view to get user input   
+		 final EditText input = new EditText(this); 
+		 alert.setView(input);
+		 alert.setPositiveButton("Add", new DialogInterface.OnClickListener() 
+		 {
+			 public void onClick(DialogInterface dialog, int whichButton) 
+			 {
+				 MainActivity.this.runOnUiThread(new Runnable() 
+				 {
+					 public void run() 
+					 {
+						 String categoryText = input.getText().toString();
+						 if (categoryText==null || categoryText.isEmpty())
+							 return;
+						 String categoryUrlItem = "";
+						 try
+						 {
+							 categoryUrlItem = java.net.URLEncoder.encode(categoryText, "UTF-8"); 
+						 }
+						 catch (Exception e) 
+						 {
+							 ;
+						 }
+						 
+						 Category category = new Category(categoryText, categoryUrlItem, false);
+						 mCategories.put(categoryText, category); //q=h
+						 mAdapterCategoryPersonal.add(category);
+						 mAdapterCategoryPersonal.notifyDataSetChanged();
+						 lvPersonalCategories.setVisibility(View.VISIBLE);
+						 if (lvPersonalCategories.getMeasuredHeight()>260)
+						 {
+							 lvPersonalCategories.getLayoutParams().height = 260;
+						 }
+						 else
+						 {
+							 lvPersonalCategories.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
+						 }
+					 } //OnItemClickListener::onItemSelected::run()
+				 });
+				 return;
+			 }  
+		 });
+		 
+		 alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() 
+		 {
+			 public void onClick(DialogInterface dialog, int which) 
+			 {
+				 // TODO Auto-generated method stub
+				 return;   
+			 }
+		 });
+		 alert.show();
+    }
     
     @Override
     public void onStart() {
@@ -451,7 +601,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		return super.onOptionsItemSelected(item);
     }
     
-    public void LoadNews()
+    public void loadNews()
     {
     	if (!Utils.isNetworkConnected(this))
     	{
@@ -499,11 +649,18 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     	
     	
     	//mNewsLoader.loadNewsCategory("http://news.google.com/news?ned=us&topic=h&output=rss&num=50");
-    	String url = "http://news.google.com/news?ned=" + mCountry.mUrlItem + "&topic=" + mCategory.mUrlItem + "&output=rss&num=25";
-    	mNewsLoader.loadNewsCategory(url);
-    	mCountryLoaded = new Category(mCountry.mKey, mCountry.mUrlItem);
-		mCategoryLoaded = new Category(mCategory.mKey, mCategory.mUrlItem);
-    	
+    	String url = "";
+    	if (mCategory.mPredefinedCategory)
+    		url = "http://news.google.com/news?ned=" + mCountry.mUrlItem + "&topic=" + mCategory.mUrlItem + "&output=rss&num=25";
+    	else
+    		url = "http://news.google.com/news?ned=" + mCountry.mUrlItem + "&q=" + mCategory.mUrlItem + "&output=rss&num=25";
+    	if (mNewsLoader.loadNewsCategory(url))
+    	{
+    		if (ibRefreshNews!=null)
+    			ibRefreshNews.setEnabled(false);
+    		mCountryLoaded = new Category(mCountry.mKey, mCountry.mUrlItem);
+    		mCategoryLoaded = new Category(mCategory.mKey, mCategory.mUrlItem);
+    	}
     }
     
     
@@ -519,6 +676,11 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     			mAdapterCountry.add(mCountries.get(key));
     		}
     		spnCountryFeed.setAdapter(mAdapterCountry);
+    		
+    		Category cat = mCountries.get(mCountry.toString());
+    		int pos = mAdapterCountry.getPosition(cat);
+    		if (pos>=0)
+    			spnCountryFeed.setSelection(pos);
     		
     		spnCountryFeed.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() 
     		{
@@ -566,6 +728,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 			public void run() {
 				if (tvNewsItemsLoading!=null)
 					tvNewsItemsLoading.setVisibility(View.GONE);
+				if (ibRefreshNews!=null)
+					ibRefreshNews.setEnabled(true);
 			}
 		});
 	}
@@ -612,6 +776,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 				{
 					mNewsItemsList.setSelection(count - 1);
 					mNewsItemsList.smoothScrollToPosition(0);
+					if (ibRefreshNews!=null)
+						ibRefreshNews.setEnabled(true);
 				}
 			}
 		});

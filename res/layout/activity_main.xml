@@ -26,10 +26,10 @@
 	        android:layout_below="@+id/rlMainTitle"
 	        android:background="@android:color/transparent"
 	        android:cacheColorHint="@android:color/transparent"
+	        android:choiceMode="singleChoice"
 	        android:divider="@android:color/transparent"
 	        android:drawSelectorOnTop="false"
-	        android:listSelector="@drawable/list_selector" 
-	        android:choiceMode="singleChoice" >
+	        android:listSelector="@drawable/list_selector" >
 
 	    </ListView>
 	    
@@ -39,19 +39,34 @@
 	        android:layout_width="match_parent"
 	        android:background="@color/themebasecolor" 
 	        android:layout_alignParentBottom="true" >
+
+	        <ImageButton
+	            android:id="@+id/ibRefreshNews"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerHorizontal="true"
+	            android:layout_centerVertical="true"
+	            android:background="@drawable/refreshbrowserbutton" />
+
 	    </RelativeLayout>
-	    
+
 	    <TextView
 	        android:id="@+id/tvNewsItemsLoading"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_centerHorizontal="true"
-	        android:layout_centerVertical="true"
+	        android:layout_centerInParent="true"
 	        android:background="@color/themebasecolor"
-	        android:padding="10dp"
+	        android:gravity="center"
+	        android:paddingBottom="4dp"
+	        android:paddingLeft="10dp"
+	        android:paddingRight="10dp"
+	        android:paddingTop="4dp"
 	        android:text="@string/loading"
 	        android:textAppearance="?android:attr/textAppearanceLarge"
 	        android:textColor="@color/themebackgroundcolor"
-	        android:textSize="20dp" />
+	        android:textSize="16dp"
+	        android:typeface="serif"
+	        android:width="140dp" />
+	    
 	</RelativeLayout>
 </FrameLayout>
