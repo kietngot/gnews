@@ -238,7 +238,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		mNewsItemsAdapter = new NewsItemListAdapter(this, R.layout.newsitem_view, mNewsList);
 		mNewsItemsList.setAdapter(mNewsItemsAdapter);
 		mNewsItemsList.setClickable(true);
-		mNewsItemsList.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+		//mNewsItemsList.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 		mNewsItemsList.setOnItemClickListener(mListItemClickListener);
 		
 		// Categories controls
@@ -774,8 +774,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 				int count = mNewsItemsList.getCount();
 				if (count>0)
 				{
-					mNewsItemsList.setSelection(count - 1);
-					mNewsItemsList.smoothScrollToPosition(0);
+					//mNewsItemsList.setSelection(count - 1);
+					//mNewsItemsList.smoothScrollToPosition(0);
 					if (ibRefreshNews!=null)
 						ibRefreshNews.setEnabled(true);
 				}
