@@ -390,7 +390,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		mCountries.put("Spain", new Category("Spain", "es"));
 		mCountries.put("UK", new Category("UK", "uk"));
 		mCountries.put("Venezuela", new Category("Venezuela", "es_ve"));
-		mCountries.put("Venezuela", new Category("Vietnam", "vi_vn"));
+		mCountries.put("Vietnam", new Category("Vietnam", "vi_vn"));
 		mCountry = AppSettings.CurrentCountry;
  	}
  	

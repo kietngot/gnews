@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.AbstractMap.SimpleEntry;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Pair;
 
 public class GnewsDatabase 
 {
@@ -60,8 +64,11 @@ public class GnewsDatabase
 	private static final String CATEGORIES_TABLE_NAME = "Categories";
 	private static final String CATEGORIES_CREATE = "create table Categories (ID integer primary key autoincrement, Name text not null, Link text not null, DefaultCategory boolean not null);";
 	
+	private static final String SETTINGS_TABLE_NAME = "Settings";
+	private static final String SETTINGS_CREATE = "create table Settings (ID integer primary key autoincrement, Name text not null, Value text not null);";
 	
 	private HashMap<String, Category> mCategories = null;
+	private HashMap<String, String> mSettings = null; //key-value pair
 	
 	public GnewsDatabase(Activity activity)
 	{
@@ -80,15 +87,23 @@ public class GnewsDatabase
 			if (!isDbOpen())
 				return false;
 			
-			// Make sure tables exist, if not create them.
+			// Make sure Categories table exists, if not create.
 			if (!GnewsDatabase.TableExists(mSqliteDb, CATEGORIES_TABLE_NAME))
 			{
 				mSqliteDb.execSQL(CATEGORIES_CREATE);
 				addDefaultCategories();
 			}
 			
+			// Make sure Settings table exists, if not create.
+			if (!GnewsDatabase.TableExists(mSqliteDb, SETTINGS_TABLE_NAME))
+			{
+				mSqliteDb.execSQL(SETTINGS_CREATE);
+				addDefaultSettings();
+			}
+			
 			// Load data form the database
 			loadCategories();
+			loadSettings();
 			
 			bRet = true;
 		}
@@ -166,7 +181,7 @@ public class GnewsDatabase
 			bRet = false;
 		}
 		return bRet;
-	} //addDefaultCategfories()
+	} //addDefaultCategories()
 	
 	public boolean addCategory(Category category)
 	{
@@ -270,7 +285,7 @@ public class GnewsDatabase
 				
 			}
 			bRet = true;
-		}
+		} //try
 		catch (Exception e)
 		{
 			bRet = false;
@@ -283,7 +298,110 @@ public class GnewsDatabase
 		if (bReload)
 			loadCategories();
 		return mCategories;
-	}
+	} //getCategories()
+	
+	
+	public boolean addDefaultSettings()
+	{
+		boolean bRet = false;
+		try
+		{
+			addSetting(new SimpleEntry("CurrentCategory", "Top News"));
+			addSetting(new SimpleEntry("CurrentCountry", "USA"));
+			addSetting(new SimpleEntry("JavaScriptEnabled", "0"));
+			bRet = true;
+		}
+		catch (Exception e)
+		{
+			bRet = false;
+		}
+		return bRet;
+	} //addDefaultSettings()
+	
+	public boolean addSetting(SimpleEntry<String, String> setting)
+	{
+		boolean bRet = false;
+		try
+		{
+			if (setting==null || !isDbOpen())
+				return false;
+			
+			// Try and get the setting from the database (if exists).
+			String whereClause = "Name=?";
+			String[] whereArgs = new String[] {
+					setting.getKey()
+			};
+			Cursor cursor = mSqliteDb.query(SETTINGS_TABLE_NAME, null, 
+					whereClause, whereArgs, null, null, null);
+			
+			if (cursor!=null && cursor.getCount()>0 && cursor.moveToFirst())
+			{
+				ContentValues values = new ContentValues();
+				values.put(setting.getKey(), setting.getValue());
+				mSqliteDb.update(SETTINGS_TABLE_NAME, values, whereClause, whereArgs);
+			}
+			else
+			{
+				String sql =   "INSERT INTO " + SETTINGS_TABLE_NAME + 
+						" (Name, Value) " +
+						"VALUES ('" + setting.getKey() + "', '" + 
+						setting.getValue() + "');";
+				mSqliteDb.execSQL(sql);
+			}
+			
+			bRet = true;
+		}
+		catch (Exception e)
+		{
+			bRet = false;
+		}
+		return bRet;
+	} //addSetting()
+	
+	public boolean loadSettings()
+	{
+		boolean bRet = false;
+		try
+		{
+			if (!isDbOpen())
+				return false;
+			
+			if (mSettings==null)
+				mSettings = new HashMap<String, String>();
+			mSettings.clear();
+			
+			Cursor cursor = mSqliteDb.query(SETTINGS_TABLE_NAME, null, null, null, null, null, null);
+			if (cursor!=null && cursor.moveToFirst())
+			{
+				do
+				{
+					String name = cursor.getString(1);
+					String value = cursor.getString(2);
+					mSettings.put(name, value);
+				} while (cursor.moveToNext());
+				
+			}
+			bRet = true;
+		} //try
+		catch (Exception e)
+		{
+			bRet = false;
+		}
+		return bRet;
+	} //loadSettings()
+	
+	public HashMap<String, String> getSettings(boolean bReload)
+	{
+		if (bReload)
+			loadSettings();
+		return mSettings;
+	} //getSettings()
+	
+	public String getSetting(String key)
+	{
+		return (String) mSettings.get(key);
+	} //getSetting()
+	
 	
 	// TODO
 	public boolean functionTemplate()
