@@ -19,6 +19,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.graphics.Bitmap;
 
+/*
+//TODO: 
+	1. Adjust the menu controls (at the bottom)
+	2. Javascript enabled flag should be loaded form the database setting (and written back)
+	3. Allow the web view to zoom the page (by pinching)
+*/
 public class NewsPageActivity extends Activity {
 	// Controls
 	WebView wvNewsPage = null;
@@ -112,6 +118,16 @@ public class NewsPageActivity extends Activity {
 		
 	} //init()
 	
+	private void updateJavascriptEnabled(boolean value)
+    {
+    	AppSettings.JavascriptEnabled= value; //(Integer.parseInt(value)==0)?false:true;
+    	/*
+    	// TODO: We need to make Database class singleton.
+    	if (mDb!=null)
+    		mDb.setSetting("JavaScriptEnabled", value);
+    	*/
+    } //updateJavascriptEnabled()
+	
 	private OnClickListener mBtnClickListener = new OnClickListener() {
         public void onClick(View v) {
         	int id = v.getId();
@@ -137,7 +153,7 @@ public class NewsPageActivity extends Activity {
         		
         	case R.id.ibBrowserJavascript:
         		WebSettings webSettings = wvNewsPage.getSettings();
-        		AppSettings.JavascriptEnabled = !webSettings.getJavaScriptEnabled();
+        		updateJavascriptEnabled(!webSettings.getJavaScriptEnabled());
         		webSettings.setJavaScriptEnabled(AppSettings.JavascriptEnabled);
         		if (AppSettings.JavascriptEnabled)
         			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_browser_javascript_yes));

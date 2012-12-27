@@ -14,7 +14,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Pair;
-
+/*
+// TODO: 
+	1. Make this class singleton (and use it in both NewsPageActivity and MainActivity)
+	2. Add countries table and initialize
+	3. Make the JavascriptEnabled value boolean on the interface level
+*/
 public class GnewsDatabase 
 {
 	public static class Category
@@ -57,6 +62,10 @@ public class GnewsDatabase
 			return mKey;
 		}
 	}
+	
+	public static final String DEFAULT_CATEGORY = "Top News";
+	public static final String DEFAULT_COUNTRY = "USA";
+	public static final String DEFAULT_JAVASCRIPT_VALUE = "0";
 	
 	private static final String DBNAME = "gnewsdb";
 	private Activity mActivity = null;
@@ -306,9 +315,9 @@ public class GnewsDatabase
 		boolean bRet = false;
 		try
 		{
-			addSetting(new SimpleEntry("CurrentCategory", "Top News"));
-			addSetting(new SimpleEntry("CurrentCountry", "USA"));
-			addSetting(new SimpleEntry("JavaScriptEnabled", "0"));
+			setSetting(new SimpleEntry("CurrentCategory", DEFAULT_CATEGORY));
+			setSetting(new SimpleEntry("CurrentCountry", DEFAULT_COUNTRY));
+			setSetting(new SimpleEntry("JavaScriptEnabled", DEFAULT_JAVASCRIPT_VALUE));
 			bRet = true;
 		}
 		catch (Exception e)
@@ -318,7 +327,13 @@ public class GnewsDatabase
 		return bRet;
 	} //addDefaultSettings()
 	
-	public boolean addSetting(SimpleEntry<String, String> setting)
+	public boolean setSetting(String key, String value)
+	{
+		SimpleEntry<String, String> setting = new SimpleEntry<String, String>(key, value);
+		return setSetting(setting);
+	} //addSetting()
+	
+	public boolean setSetting(SimpleEntry<String, String> setting)
 	{
 		boolean bRet = false;
 		try
@@ -329,7 +344,7 @@ public class GnewsDatabase
 			// Try and get the setting from the database (if exists).
 			String whereClause = "Name=?";
 			String[] whereArgs = new String[] {
-					setting.getKey()
+					setting.getValue()
 			};
 			Cursor cursor = mSqliteDb.query(SETTINGS_TABLE_NAME, null, 
 					whereClause, whereArgs, null, null, null);
@@ -399,7 +414,8 @@ public class GnewsDatabase
 	
 	public String getSetting(String key)
 	{
-		return (String) mSettings.get(key);
+		String val = (String) mSettings.get(key);
+		return val;
 	} //getSetting()
 	
 	
