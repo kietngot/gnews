@@ -275,7 +275,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		registerForContextMenu(lvPersonalCategories);
 		
 		// Open database
-		mDb = new GnewsDatabase(this);
+		mDb = GnewsDatabase.getDatabase(this);
 		if (mDb!=null && mDb.open())
 		{
 			// Initialize settings

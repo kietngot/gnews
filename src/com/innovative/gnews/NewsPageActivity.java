@@ -1,4 +1,5 @@
 package com.innovative.gnews;
+import com.innovative.gnews.db.GnewsDatabase;
 import com.innovative.gnews.utils.Utils;
 
 import android.app.Activity;
@@ -37,6 +38,8 @@ public class NewsPageActivity extends Activity {
 	
 	String mNewsPageURL = null;
 	
+	GnewsDatabase mDb = null;
+	
 	@Override
     public void onCreate(Bundle savedInstanceState) {		
     	super.onCreate(savedInstanceState);
@@ -49,6 +52,7 @@ public class NewsPageActivity extends Activity {
 			Titlebar.InitTitlebar(this, getString(R.string.loading), null);
 		}
 		
+		mDb = GnewsDatabase.getDatabase();
 		init();
     } //onCreate()
 	
@@ -120,12 +124,10 @@ public class NewsPageActivity extends Activity {
 	
 	private void updateJavascriptEnabled(boolean value)
     {
-    	AppSettings.JavascriptEnabled= value; //(Integer.parseInt(value)==0)?false:true;
-    	/*
-    	// TODO: We need to make Database class singleton.
+    	AppSettings.JavascriptEnabled= value;
+    	
     	if (mDb!=null)
-    		mDb.setSetting("JavaScriptEnabled", value);
-    	*/
+    		mDb.setSetting("JavaScriptEnabled", value?"1":"0");
     } //updateJavascriptEnabled()
 	
 	private OnClickListener mBtnClickListener = new OnClickListener() {

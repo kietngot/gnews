@@ -7,9 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.AbstractMap.SimpleEntry;
 
+import com.innovative.gnews.MainActivity;
+
 import android.app.Activity;
+import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -79,9 +83,29 @@ public class GnewsDatabase
 	private HashMap<String, Category> mCategories = null;
 	private HashMap<String, String> mSettings = null; //key-value pair
 	
-	public GnewsDatabase(Activity activity)
+	private static class DatabaseSingletonHolder 
 	{
-		mActivity = activity;
+		public static final GnewsDatabase INSTANCE = new GnewsDatabase();
+	} //class DatabaseSingletonHolder
+
+	// This should be called the first time.
+	public static GnewsDatabase getDatabase(Activity activity) 
+	{
+		DatabaseSingletonHolder.INSTANCE.mActivity = activity;
+		return DatabaseSingletonHolder.INSTANCE;
+	} //getDatabase() 
+	
+	public static GnewsDatabase getDatabase() 
+	{
+		if (DatabaseSingletonHolder.INSTANCE.mActivity!=null)
+			return DatabaseSingletonHolder.INSTANCE;
+		else
+			return null;
+	} //getDatabase() 
+	
+	private GnewsDatabase()
+	{
+		
 	} // GnewsDatabase()
 	
 	public boolean open()
