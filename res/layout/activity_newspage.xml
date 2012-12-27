@@ -71,15 +71,6 @@
             android:background="@drawable/forwardbrowserbutton" />
 
         <ImageButton
-            android:id="@+id/ibBrowserRefresh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
-            android:layout_toRightOf="@+id/ibBrowserForward"
-            android:background="@drawable/refreshbrowserbutton" />
-
-        <ImageButton
             android:id="@+id/ibBrowserBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -89,12 +80,20 @@
             android:background="@drawable/backbrowserbutton" />
 
         <ImageButton
+            android:id="@+id/ibBrowserRefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/refreshbrowserbutton" />
+
+        <ImageButton
             android:id="@+id/ibBrowserJavascript"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
-            android:layout_toRightOf="@+id/ibBrowserRefresh"
+            android:layout_marginRight="5dp"
             android:background="@drawable/ic_browser_javascript_no" />
 
     </RelativeLayout>
