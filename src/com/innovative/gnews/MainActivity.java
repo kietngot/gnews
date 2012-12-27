@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import com.innovative.gnews.Titlebar;
 import com.innovative.gnews.R;
+import com.innovative.gnews.db.GnewsDatabase;
+import com.innovative.gnews.db.GnewsDatabase.Category;
 import com.innovative.gnews.feed.NewsCategory;
 import com.innovative.gnews.feed.NewsItem;
 import com.innovative.gnews.feed.NewsLoadEvents;
@@ -28,9 +30,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,7 +44,9 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -54,31 +61,6 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
 
 public class MainActivity extends Activity implements NewsLoadEvents, AnimationListener {
-	
-	static class Category
-	{
-		public String mKey;
-		public String mUrlItem;
-		public boolean mPredefinedCategory = true; // Make this false for personal categories
-		public Category(String key, String urlItem)
-		{
-			mKey = key;
-			mUrlItem = urlItem;
-			mPredefinedCategory = true;
-		}
-		
-		public Category(String key, String urlItem, boolean predefined)
-		{
-			mKey = key;
-			mUrlItem = urlItem;
-			mPredefinedCategory = predefined;
-		}
-		
-		public String toString()
-		{
-			return mKey;
-		}
-	}
 	private HashMap<String, Category> mCountries = null;
 	private HashMap<String, Category> mCategories = null;
 	
@@ -125,6 +107,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	ListView lvPreconfiguredCategories = null;
 	ListView lvPersonalCategories = null;
 	ImageButton ibRefreshNews = null;
+	
+	GnewsDatabase mDb = null;
 	
 	@Override
 	public void onAnimationEnd(Animation arg0)
@@ -283,14 +267,79 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		if (ibRefreshNews!=null)
 			ibRefreshNews.setOnClickListener(mBtnClickListener);
 		
+		
+		// Register the context menu
+		registerForContextMenu(lvPersonalCategories);
+		
+		// Open database
+		mDb = new GnewsDatabase(this);
+		if (mDb!=null)
+			mDb.open();
+		
 		// Menu items
 		prepareCategoriesMap();
 		loadCountryFeedList();
 		loadPersonalCategories();
 		loadCategoriesList();
-				
+		
 		// load news
 		loadNews();
+    }
+    
+    @Override
+    public void onDestroy()
+    {
+    	if (mDb!=null)
+    		mDb.close();
+    	mDb = null;
+    	super.onDestroy();
+    }
+    
+    
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.personalcat_context_menu, menu);
+    }
+    
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case R.id.delete_personal_category:
+            	{
+            		if (mDb!=null)
+            		{
+            			AdapterContextMenuInfo menuInfo = (AdapterContextMenuInfo) item.getMenuInfo();
+            			int arrayAdapterPosition = menuInfo.position;
+            			Category category = mAdapterCategoryPersonal.getItem(arrayAdapterPosition);
+            			if(category!=null)
+            			{
+            				if (mDb.deleteCategory(category.mKey))
+            				{
+            					mAdapterCategoryPersonal.remove(category);
+            					lvPersonalCategories.refreshDrawableState();
+            					Toast.makeText(this, "Personal category \"" + category.mKey + "\" deleted!", Toast.LENGTH_SHORT).show();
+            					
+            					// If the current category is same as deleted one, 
+            					//	reload the news with default category.
+            					if (AppSettings.CurrentCategory.mKey == category.mKey)
+            					{
+            						AppSettings.CurrentCategory = mCategories.get(AppSettings.DefaultCategory.mKey);
+            						mCategory = mCategories.get(AppSettings.DefaultCategory.mKey);
+            						loadNews();
+            					}
+            				}
+            			}
+            		}
+            		lvPersonalCategories.getSelectedItem();
+            	}
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
     
     // Display the toolbar notification
@@ -347,16 +396,23 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
  	
  	private void prepareCategoriesMap()
  	{
- 		mCategories = new HashMap<String, Category>();
- 		mCategories.put("Top News", new Category("Top News", "h")); //topic=h
- 		mCategories.put("World", new Category("World", "w")); //topic=w
- 		mCategories.put("Technology", new Category("Technology", "tc")); //topic=tc
- 		mCategories.put("Entertainment", new Category("Entertainment", "e")); //topic=e
- 		mCategories.put("Politics", new Category("Politics", "p")); //topic=p
- 		mCategories.put("Business", new Category("Business", "b")); //topic=b
- 		mCategories.put("Health", new Category("Health", "m")); //topic=m
- 		mCategories.put("Science", new Category("Science", "snc")); //topic=snc
- 		mCategories.put("Sports", new Category("Sports", "s")); //topic=s
+ 		if (mDb!=null)
+ 		{
+ 			mCategories = mDb.getCategories(false);
+ 		}
+ 		else
+ 		{
+	 		mCategories = new HashMap<String, Category>();
+	 		mCategories.put("Top News", new Category("Top News", "h")); //topic=h
+	 		mCategories.put("World", new Category("World", "w")); //topic=w
+	 		mCategories.put("Technology", new Category("Technology", "tc")); //topic=tc
+	 		mCategories.put("Entertainment", new Category("Entertainment", "e")); //topic=e
+	 		mCategories.put("Politics", new Category("Politics", "p")); //topic=p
+	 		mCategories.put("Business", new Category("Business", "b")); //topic=b
+	 		mCategories.put("Health", new Category("Health", "m")); //topic=m
+	 		mCategories.put("Science", new Category("Science", "snc")); //topic=snc
+	 		mCategories.put("Sports", new Category("Sports", "s")); //topic=s
+ 		}
  		mCategory = AppSettings.CurrentCategory;
  	}
  	
@@ -372,6 +428,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
  		mAdapterCategoryPersonal.setNotifyOnChange(true);
 		lvPersonalCategories.setAdapter(mAdapterCategoryPersonal);
 		lvPersonalCategories.setOnItemClickListener(onPersonalCategoriesClick);
+		
 		lvPersonalCategories.setSelector(R.drawable.list_selector);
 		lvPersonalCategories.setSelected(true);
 		if (mAdapterCategoryPersonal.getCount()>0)
@@ -509,7 +566,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 						 }
 						 
 						 Category category = new Category(categoryText, categoryUrlItem, false);
-						 mCategories.put(categoryText, category); //q=h
+						 mDb.addCategory(category);
 						 mAdapterCategoryPersonal.add(category);
 						 mAdapterCategoryPersonal.notifyDataSetChanged();
 						 lvPersonalCategories.setVisibility(View.VISIBLE);
@@ -658,8 +715,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     	{
     		if (ibRefreshNews!=null)
     			ibRefreshNews.setEnabled(false);
-    		mCountryLoaded = new Category(mCountry.mKey, mCountry.mUrlItem);
     		mCategoryLoaded = new Category(mCategory.mKey, mCategory.mUrlItem);
+    		mCountryLoaded = new Category(mCountry.mKey, mCountry.mUrlItem);
     	}
     }
     
@@ -718,6 +775,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 				mTitleText = mCategory.toString() + " (" + mCountry.toString() + ")";
 				if (tvNewsItemsLoading!=null)
 					tvNewsItemsLoading.setVisibility(View.INVISIBLE);
+				AppSettings.CurrentCategory = new Category(mCategoryLoaded.mKey, mCategoryLoaded.mUrlItem);
+	    		AppSettings.CurrentCountry= new Category(mCountryLoaded.mKey, mCountryLoaded.mUrlItem);
 			}
 		});
 	}
@@ -825,6 +884,5 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 			pageIntent.putExtra("NewsPageURL", new String(item.mLink));
 			startActivityForResult(pageIntent, 1);
 		}
-
 	}; //OnItemClickListener
 }

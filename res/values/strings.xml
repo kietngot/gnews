@@ -8,4 +8,5 @@
     <string name="nonetwork">No internet connection</string>
     <string name="category_topnews">Top news</string>
     <string name="category_technews">Technology</string>
+    <string name="delete">Delete</string>
 </resources>
