@@ -119,33 +119,19 @@
         android:paddingTop="10dp" >
 
         <TextView
-            android:id="@+id/tvCountryLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="2dp"
-            android:padding="2dp"
-            android:text="Country:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/themebackgroundcolor"
-            android:textSize="20sp" />
-
-        <TextView
             android:id="@+id/tvCountrySpinnerLbl"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="5dp"
-            android:layout_toRightOf="@+id/tvCountryLabel"
             android:background="@drawable/roundedshape"
             android:clickable="true"
             android:paddingBottom="2dp"
             android:paddingLeft="10dp"
             android:paddingRight="2dp"
             android:paddingTop="2dp"
-            android:text="USA"
+            android:text="USA edition"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@drawable/roundedshape"
             android:textSize="20sp" />
@@ -159,6 +145,15 @@
             android:layout_alignParentTop="true"
             android:listSelector="@drawable/spinner_selector"
             android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tvCountrySpinnerLbl"
+            android:layout_alignRight="@+id/tvCountrySpinnerLbl"
+            android:src="@android:drawable/ic_menu_more" />
+
     </RelativeLayout>
 
 </RelativeLayout>

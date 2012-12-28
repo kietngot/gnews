@@ -13,10 +13,11 @@
 	<color name="semitransparent">#9ebcda</color>
 	
 	<!-- Theme colors -->
-	<color name="themebasecolor">#00aceb</color>
+	<color name="themebasecolor">#00a6ff</color>
 	<color name="themebackgroundcolor">#ffffff</color>
 	<color name="themetextcolor">#555555</color>
 	<color name="themesidemenubackcolor">#2d2d37</color>
 	<color name="themessemitransparentcolor">#2d7f7f7f</color>
 	<color name="themessemitransparentlightcolor">#acc5d7</color>
+	<color name="themegreencolor">#73cc2b</color>
 </resources>

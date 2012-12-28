@@ -158,9 +158,16 @@ public class NewsPageActivity extends Activity {
         		updateJavascriptEnabled(!webSettings.getJavaScriptEnabled());
         		webSettings.setJavaScriptEnabled(AppSettings.JavascriptEnabled);
         		if (AppSettings.JavascriptEnabled)
+        		{
         			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_browser_javascript_yes));
+        			Toast.makeText(NewsPageActivity.this, "Javascript enabled. Please note that this can cause security issues, make sure you trust the webpage.", 
+        					Toast.LENGTH_LONG).show();
+        		}
         		else
+        		{
         			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_browser_javascript_no));
+        			Toast.makeText(NewsPageActivity.this, "Javascript disabled", Toast.LENGTH_SHORT).show();
+        		}
         		break;
         	}
         }

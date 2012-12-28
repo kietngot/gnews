@@ -62,6 +62,8 @@ import android.view.animation.TranslateAnimation;
 	6. See if we can change the way we add the personal categories
 		- like having a textbox with hint and the plus button would add directly.
 	7. Figure a way not to let the menu to be hidden on choosing a category.
+	8. Toast messages where necessary (when javascript enabled, etc.,)
+	9. On adding a personal category, do not close the menu.
 */
 
 public class MainActivity extends Activity implements NewsLoadEvents, AnimationListener {
@@ -600,6 +602,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 						 {
 							 lvPersonalCategories.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
 						 }
+						 layoutApp(menuOut);
 					 } //OnItemClickListener::onItemSelected::run()
 				 });
 				 return;
@@ -772,7 +775,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     					{
     						Category country = (Category)parent.getItemAtPosition(pos);
     						updateCurrentCountry(country.mKey);
-    						tvCountrySpinnerLbl.setText(AppSettings.CurrentCountry);
+    						tvCountrySpinnerLbl.setText(AppSettings.CurrentCountry + " edition");
     						//mAdapterCountry.notifyDataSetChanged();
     						layoutApp(menuOut);
     					} //OnItemClickListener::onItemSelected::run()
