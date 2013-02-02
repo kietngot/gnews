@@ -390,30 +390,38 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
  	// TODO: Load countries from the database
  	private void prepareCountriesMap()
  	{
- 		mCountries = new HashMap<String, Category>();
- 		mCountries.put("USA", new Category("USA", "us")); //ned=us
-		mCountries.put("Argentina", new Category("Argentina", "ar")); //ned=ar
-		mCountries.put("Australia", new Category("Australia", "au")); //ned=au
-		mCountries.put("Austria", new Category("Austria", "at")); //ned=at
-		mCountries.put("Brazil", new Category("Brazil", "br"));
-		mCountries.put("Canada", new Category("Canada", "ca"));
-		mCountries.put("Chile", new Category("Chile", "cl"));
-		mCountries.put("France", new Category("France", "fr"));
-		mCountries.put("Germany", new Category("Germany", "de"));
-		mCountries.put("India", new Category("India", "in"));
-		mCountries.put("Pakistan", new Category("Pakistan", "en_pk"));
-		mCountries.put("Ireland", new Category("Ireland", "ie"));
-		mCountries.put("Italy", new Category("Italy", "it"));
-		mCountries.put("Mexico", new Category("Mexico", "mx"));
-		mCountries.put("Peru", new Category("Peru", "pe"));
-		mCountries.put("Portugal", new Category("Portugal", "pt-PT_pt"));
-		mCountries.put("Russia", new Category("Russia", "ru_ru"));
-		mCountries.put("Spain", new Category("Spain", "es"));
-		mCountries.put("UK", new Category("UK", "uk"));
-		mCountries.put("Venezuela", new Category("Venezuela", "es_ve"));
-		mCountries.put("Vietnam", new Category("Vietnam", "vi_vn"));
+ 		if (mDb!=null)
+ 		{
+ 			mCountries = mDb.getCountries(false);
+ 		}
+ 		else
+ 		{
+	 		mCountries = new HashMap<String, Category>();
+	 		mCountries.put("U.S", new Category("U.S", "us")); //ned=us
+			mCountries.put("Argentina", new Category("Argentina", "ar")); //ned=ar
+			mCountries.put("Australia", new Category("Australia", "au")); //ned=au
+			mCountries.put("Austria", new Category("Austria", "at")); //ned=at
+			mCountries.put("Brazil", new Category("Brazil", "br"));
+			mCountries.put("Canada", new Category("Canada", "ca"));
+			mCountries.put("Chile", new Category("Chile", "cl"));
+			mCountries.put("France", new Category("France", "fr"));
+			mCountries.put("Germany", new Category("Germany", "de"));
+			mCountries.put("India", new Category("India", "in"));
+			mCountries.put("Pakistan", new Category("Pakistan", "en_pk"));
+			mCountries.put("Ireland", new Category("Ireland", "ie"));
+			mCountries.put("Italy", new Category("Italy", "it"));
+			mCountries.put("Mexico", new Category("Mexico", "mx"));
+			mCountries.put("Peru", new Category("Peru", "pe"));
+			mCountries.put("Portugal", new Category("Portugal", "pt-PT_pt"));
+			mCountries.put("Russia", new Category("Russia", "ru_ru"));
+			mCountries.put("Spain", new Category("Spain", "es"));
+			mCountries.put("UK", new Category("UK", "uk"));
+			mCountries.put("Venezuela", new Category("Venezuela", "es_ve"));
+			mCountries.put("Vietnam", new Category("Vietnam", "vi_vn"));
+ 		}
 		AppSettings.CurrentCountry = mDb.getSetting("CurrentCountry");
- 	}
+ 	} //prepareCountriesMap()
+ 	
  	
  	private void prepareCategoriesMap()
  	{

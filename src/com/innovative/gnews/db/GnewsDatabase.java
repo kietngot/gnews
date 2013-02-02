@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.AbstractMap.SimpleEntry;
 
+import com.innovative.gnews.AppSettings;
 import com.innovative.gnews.MainActivity;
 
 import android.app.Activity;
@@ -68,7 +69,7 @@ public class GnewsDatabase
 	}
 	
 	public static final String DEFAULT_CATEGORY = "Top News";
-	public static final String DEFAULT_COUNTRY = "USA";
+	public static final String DEFAULT_COUNTRY = "U.S";
 	public static final String DEFAULT_JAVASCRIPT_VALUE = "0";
 	
 	private static final String DBNAME = "gnewsdb";
@@ -80,8 +81,12 @@ public class GnewsDatabase
 	private static final String SETTINGS_TABLE_NAME = "Settings";
 	private static final String SETTINGS_CREATE = "create table Settings (ID integer primary key autoincrement, Name text not null, Value text not null);";
 	
+	private static final String COUNTRIES_TABLE_NAME = "Countries";
+	private static final String COUNTRIES_CREATE = "create table Countries (ID integer primary key autoincrement, Name text not null, Link text not null, DefaultCategory boolean not null);";
+	
 	private HashMap<String, Category> mCategories = null;
 	private HashMap<String, String> mSettings = null; //key-value pair
+	private HashMap<String, Category> mCountries = null;
 	
 	private static class DatabaseSingletonHolder 
 	{
@@ -134,9 +139,17 @@ public class GnewsDatabase
 				addDefaultSettings();
 			}
 			
+			// Make sure Countries table exists, if not create.
+			if (!GnewsDatabase.TableExists(mSqliteDb, COUNTRIES_TABLE_NAME))
+			{
+				mSqliteDb.execSQL(COUNTRIES_CREATE);
+				addDefaultCountries();
+			}
+			
 			// Load data form the database
 			loadCategories();
 			loadSettings();
+			loadCountries();
 			
 			bRet = true;
 		}
@@ -189,6 +202,87 @@ public class GnewsDatabase
 		return bRet;
 	}
 	
+	public boolean addDefaultCountries()
+	{
+		boolean bRet = false;
+		try
+		{
+			addCountry(new Category("Argentina", "ar"));
+			addCountry(new Category("Australia", "au"));
+			addCountry(new Category("Austria", "at"));
+			addCountry(new Category("Brazil", "br"));
+			addCountry(new Category("Canada", "ca"));
+			addCountry(new Category("Chile", "cl"));
+			addCountry(new Category("France", "fr"));
+			addCountry(new Category("Germany", "de"));
+			addCountry(new Category("India", "in"));
+			addCountry(new Category("Ireland", "ie"));
+			addCountry(new Category("Italy", "it"));
+			addCountry(new Category("Mexico", "mx"));
+			addCountry(new Category("Pakistan", "en_pk"));
+			addCountry(new Category("Peru", "pe"));
+			addCountry(new Category("Portugal", "pt-PT_pt"));
+			addCountry(new Category("Russia", "ru_ru"));
+			addCountry(new Category("Spain", "es"));
+			addCountry(new Category("U.K", "uk"));
+			addCountry(new Category("U.S", "us"));
+			addCountry(new Category("Venezuela", "es_ve"));
+			addCountry(new Category("Vietnam", "vi_vn"));
+			bRet = true;
+		}
+		catch (Exception e)
+		{
+			bRet = false;
+		}
+		return bRet;
+	} //addDefaultCountries()
+	
+	public boolean addCountry(Category country)
+	{
+		return addCategoryRecord(country, COUNTRIES_TABLE_NAME);
+	} //addCountry()
+	
+	public boolean loadCountries()
+	{
+		boolean bRet = false;
+		try
+		{
+			if (!isDbOpen())
+				return false;
+			
+			if (mCountries==null)
+				mCountries = new HashMap<String, Category>();
+			mCountries.clear();
+			
+			Cursor cursor = mSqliteDb.query(COUNTRIES_TABLE_NAME, null, null, null, null, null, null);
+			if (cursor!=null && cursor.moveToFirst())
+			{
+				do
+				{
+					int id = cursor.getInt(0);
+					String name = cursor.getString(1);
+					String link = cursor.getString(2);
+					boolean isDefault = (cursor.getInt(3)>0);
+					mCountries.put(name, new Category(id, name, link, isDefault));
+				} while (cursor.moveToNext());
+				
+			}
+			bRet = true;
+		} //try
+		catch (Exception e)
+		{
+			bRet = false;
+		}
+		return bRet;
+	} //loadCountries()
+	
+	public HashMap<String, Category> getCountries(boolean bReload)
+	{
+		if (bReload)
+			loadCountries();
+		return mCountries;
+	} //getCountries()
+	
 	// addDefaultCategfories: Adds default categories to the table.
 	//	like, "Top News", "Technology", "Politics", etc.,
 	public boolean addDefaultCategories()
@@ -218,6 +312,11 @@ public class GnewsDatabase
 	
 	public boolean addCategory(Category category)
 	{
+		return addCategoryRecord(category, CATEGORIES_TABLE_NAME);
+	} //addCategory()
+	
+	public boolean addCategoryRecord(Category category, String tableName)
+	{
 		boolean bRet = false;
 		try
 		{
@@ -225,7 +324,7 @@ public class GnewsDatabase
 				return false;
 			
 			int predefined = category.mPredefinedCategory==true?1:0;
-			String sql =   "INSERT INTO " + CATEGORIES_TABLE_NAME + 
+			String sql =   "INSERT INTO " + tableName + 
 					" (Name, Link, DefaultCategory) " +
 					"VALUES ('" + category.mKey + "', '" + 
 					category.mUrlItem + "', '" + 
@@ -239,7 +338,7 @@ public class GnewsDatabase
 				category.mKey
 			};
 			
-			Cursor cursor = mSqliteDb.query(CATEGORIES_TABLE_NAME, null, 
+			Cursor cursor = mSqliteDb.query(tableName, null, 
 					whereClause, whereArgs, null, null, null);
 			
 			if (cursor!=null && cursor.getCount()>0 && cursor.moveToFirst())
@@ -262,7 +361,7 @@ public class GnewsDatabase
 			bRet = false;
 		}
 		return bRet;
-	} //addCategory()
+	} //addCategoryRecord()
 	
 	// TODO
 	public boolean deleteCategory(String name)
