@@ -2,7 +2,8 @@ package com.innovative.gnews.feed;
 import android.graphics.Bitmap;
 
 public class NewsItem implements Cloneable {
-	public String mTitle = null;
+	public String mSummary = null;
+	public String mSource = null;
 	public String mLink = null;
 	public String mGuid = null;
 	public boolean mIsGuidPermanentLink = false;
@@ -35,6 +36,28 @@ public class NewsItem implements Cloneable {
 		thumbLink = thumbLink.replace("//", "http://");
 		return thumbLink;
 	} //getThumbLink()
+	
+	public static String getSource(String itemText)
+	{
+		String source = "Unknown Source";
+		
+		int index = itemText.lastIndexOf("-");
+		if (index>=0)
+			source = itemText.substring(index+1);
+		source = source.trim();
+		return source;
+	} //getSource()
+	
+	public static String getSummary(String itemText)
+	{
+		String summary = itemText;
+		
+		int index = itemText.lastIndexOf("-");
+		if (index>=0)
+			summary = itemText.substring(0, index);
+		summary = summary.trim();
+		return summary;
+	} //getSummary()
 	
 	
 	public NewsItem clone()

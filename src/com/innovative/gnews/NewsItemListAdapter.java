@@ -44,7 +44,11 @@ public class NewsItemListAdapter extends ArrayAdapter<NewsItem>
 		
 		TextView tvNewsItemTitle = (TextView) convertView.findViewById(R.id.tvNewsItemTitle);
 		if (tvNewsItemTitle!=null)
-			tvNewsItemTitle.setText(newsItem.mTitle);
+			tvNewsItemTitle.setText(newsItem.mSummary);
+		
+		TextView tvNewsItemSource = (TextView) convertView.findViewById(R.id.tvNewsItemSource);
+		if (tvNewsItemSource!=null)
+			tvNewsItemSource.setText(newsItem.mSource);
 		
 		TextView tvNewsItemDatePublished = (TextView) convertView.findViewById(R.id.tvNewsItemDatePublished);
 		if (tvNewsItemDatePublished!=null)

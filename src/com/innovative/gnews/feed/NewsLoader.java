@@ -124,7 +124,7 @@ public class NewsLoader {
             		NewsItem newsItem = mNewsCategory.mItemFeedMap.get(key);
             		loadThumbImage(newsItem);
             		if (mLoadEvents!=null)
-            			mLoadEvents.thumbLoaded(newsItem.mTitle, newsItem.mThumbBitmap);
+            			mLoadEvents.thumbLoaded(newsItem.mSummary, newsItem.mThumbBitmap);
             	}
             	if (mLoadEvents!=null)
         			mLoadEvents.allThumbsLoaded();

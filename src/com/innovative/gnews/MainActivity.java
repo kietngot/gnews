@@ -857,6 +857,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	@Override
 	public void thumbLoaded(final String itemTitle, final Bitmap thumb)
 	{
+		int tmp = 0;
+		tmp = 1;
 		// TODO: The update in this function seems to be unnecessary!
 		MainActivity.this.runOnUiThread(new Runnable() {
 			public void run() {
@@ -866,7 +868,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 					for (int i=0; i<count; i++)
 					{
 						NewsItem item = (NewsItem)mNewsItemsAdapter.getItem(i);
-						if (item.mTitle==itemTitle)
+						if (item.mSummary==itemTitle)
 						{
 							if (thumb!=null)
 							{

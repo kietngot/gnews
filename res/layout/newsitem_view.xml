@@ -38,7 +38,7 @@
 	        android:id="@+id/rlNewsItemTexts"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentRight="true"
+	        android:layout_alignTop="@+id/rlNewsItemThumb"
 	        android:layout_centerVertical="true"
 	        android:layout_marginRight="3dp"
 	        android:layout_toRightOf="@+id/rlNewsItemThumb"
@@ -49,15 +49,27 @@
 	        <TextView
 	            android:id="@+id/tvNewsItemTitle"
 	            android:layout_width="fill_parent"
-	            android:layout_height="fill_parent"
+	            android:layout_height="wrap_content"
 	            android:layout_alignParentTop="true"
 	            android:background="@android:color/transparent"
-	            android:gravity="center_vertical"
 	            android:paddingLeft="1dp"
 	            android:paddingTop="0dp"
 	            android:text="Item Title"
 	            android:textColor="@drawable/news_item_selector_color"
 	            android:textSize="16dp"
+	            android:textStyle="normal" />
+	        
+	        <TextView
+	            android:id="@+id/tvNewsItemSource"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@+id/tvNewsItemTitle"
+	            android:background="@android:color/transparent"
+	            android:paddingLeft="1dp"
+	            android:paddingTop="0dp"
+	            android:text="Item Source"
+	            android:textColor="@drawable/news_item_selector_color"
+	            android:textSize="12dp"
 	            android:textStyle="normal" />
 	    </RelativeLayout>
 		

@@ -145,11 +145,14 @@ public class XmlHelperNews extends DefaultHandler {
 			if(localName.equalsIgnoreCase("item")) 
 			{
 				// TODO: Copy the mTmpNewsImage (not just reference)
-				mNewsCategory.mItemFeedMap.put(mTmpNewsItem.mTitle, mTmpNewsItem.clone());
+				mNewsCategory.mItemFeedMap.put(mTmpNewsItem.mSummary, mTmpNewsItem.clone());
 				mTmpNewsItem = null;
 			}
 			else if(localName.equalsIgnoreCase("title"))
-				mTmpNewsItem.mTitle = mTmpText;
+			{
+				mTmpNewsItem.mSource = NewsItem.getSource(mTmpText);
+				mTmpNewsItem.mSummary = NewsItem.getSummary(mTmpText);
+			}
 			else if(localName.equalsIgnoreCase("link"))
 				mTmpNewsItem.mLink = mTmpText;
 			else if(localName.equalsIgnoreCase("guid"))
