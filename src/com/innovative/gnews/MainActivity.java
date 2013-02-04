@@ -66,7 +66,7 @@ import android.view.animation.TranslateAnimation;
 */
 
 public class MainActivity extends Activity implements NewsLoadEvents, AnimationListener {
-	private HashMap<String, Category> mCountries = null;
+	private ArrayList<Category> mCountries = null;
 	private HashMap<String, Category> mCategories = null;
 	
 	static class AnimParams {
@@ -399,32 +399,6 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
  		{
  			mCountries = mDb.getCountries(false);
  		}
- 		else
- 		{
- 			// TODO: Remove this - This will be obsolete.
-	 		mCountries = new HashMap<String, Category>();
-	 		mCountries.put("U.S", new Category("U.S", "us")); //ned=us
-			mCountries.put("Argentina", new Category("Argentina", "ar")); //ned=ar
-			mCountries.put("Australia", new Category("Australia", "au")); //ned=au
-			mCountries.put("Austria", new Category("Austria", "at")); //ned=at
-			mCountries.put("Brazil", new Category("Brazil", "br"));
-			mCountries.put("Canada", new Category("Canada", "ca"));
-			mCountries.put("Chile", new Category("Chile", "cl"));
-			mCountries.put("France", new Category("France", "fr"));
-			mCountries.put("Germany", new Category("Germany", "de"));
-			mCountries.put("India", new Category("India", "in"));
-			mCountries.put("Pakistan", new Category("Pakistan", "en_pk"));
-			mCountries.put("Ireland", new Category("Ireland", "ie"));
-			mCountries.put("Italy", new Category("Italy", "it"));
-			mCountries.put("Mexico", new Category("Mexico", "mx"));
-			mCountries.put("Peru", new Category("Peru", "pe"));
-			mCountries.put("Portugal", new Category("Portugal", "pt-PT_pt"));
-			mCountries.put("Russia", new Category("Russia", "ru_ru"));
-			mCountries.put("Spain", new Category("Spain", "es"));
-			mCountries.put("UK", new Category("UK", "uk"));
-			mCountries.put("Venezuela", new Category("Venezuela", "es_ve"));
-			mCountries.put("Vietnam", new Category("Vietnam", "vi_vn"));
- 		}
 		AppSettings.CurrentCountry = mDb.getSetting("CurrentCountry");
  	} //prepareCountriesMap()
  	
@@ -718,6 +692,22 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		return super.onOptionsItemSelected(item);
     }
     
+    private Category getCountryByKey(String countryKey)
+    {
+    	Category country = null;
+    	for (int i=0; i<mCountries.size(); i++)
+    	{
+    		Category cat = mCountries.get(i);
+    		
+    		if (cat!=null && cat.mKey!=null && cat.mKey.compareToIgnoreCase(countryKey)==0)
+    		{
+    			country = cat;
+    			break;
+    		}
+    	} //for
+    	return country;
+    } //getCountryByKey()
+    
     public void loadNews()
     {
     	if (!Utils.isNetworkConnected(this))
@@ -752,7 +742,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     	
     	if (mAdapterCountry!=null)
     	{
-    		int pos = mAdapterCountry.getPosition(mCountries.get(AppSettings.CurrentCountry));
+    		int pos = mAdapterCountry.getPosition(getCountryByKey(AppSettings.CurrentCountry));
     		if (pos>0)
     			spnCountryFeed.setSelection(pos);
     	}
@@ -766,7 +756,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     	
     	String url = "";
     	Category category = mCategories.get(AppSettings.CurrentCategory);
-    	Category country = mCountries.get(AppSettings.CurrentCountry);
+    	Category country = getCountryByKey(AppSettings.CurrentCountry);
     	if (category.mPredefinedCategory)
     		url = "http://news.google.com/news?ned=" + country.mUrlItem + "&topic=" + category.mUrlItem + "&output=rss&num=25";
     	else
@@ -788,13 +778,14 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     	if (spnCountryFeed != null)
     	{
     		mAdapterCountry = new ArrayAdapter<Category>(this, R.layout.countries_spinner_item);
-    		for (String key : mCountries.keySet())
+    		for (Category countryCat : mCountries)
     		{
-    			mAdapterCountry.add(mCountries.get(key));
+    			mAdapterCountry.add(countryCat);
     		}
+    		
     		spnCountryFeed.setAdapter(mAdapterCountry);
     		
-    		Category cat = mCountries.get(AppSettings.CurrentCountry);
+    		Category cat = getCountryByKey(AppSettings.CurrentCountry);
     		int pos = mAdapterCountry.getPosition(cat);
     		if (pos>=0)
     			spnCountryFeed.setSelection(pos);

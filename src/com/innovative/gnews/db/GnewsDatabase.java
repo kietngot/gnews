@@ -86,7 +86,7 @@ public class GnewsDatabase
 	
 	private HashMap<String, Category> mCategories = null;
 	private HashMap<String, String> mSettings = null; //key-value pair
-	private HashMap<String, Category> mCountries = null;
+	private ArrayList<Category> mCountries = null;
 	
 	private static class DatabaseSingletonHolder 
 	{
@@ -207,6 +207,7 @@ public class GnewsDatabase
 		boolean bRet = false;
 		try
 		{
+			addCountry(new Category("U.S", "us"));
 			addCountry(new Category("Argentina", "ar"));
 			addCountry(new Category("Australia", "au"));
 			addCountry(new Category("Austria", "at"));
@@ -225,7 +226,6 @@ public class GnewsDatabase
 			addCountry(new Category("Russia", "ru_ru"));
 			addCountry(new Category("Spain", "es"));
 			addCountry(new Category("U.K", "uk"));
-			addCountry(new Category("U.S", "us"));
 			addCountry(new Category("Venezuela", "es_ve"));
 			addCountry(new Category("Vietnam", "vi_vn"));
 			bRet = true;
@@ -251,7 +251,7 @@ public class GnewsDatabase
 				return false;
 			
 			if (mCountries==null)
-				mCountries = new HashMap<String, Category>();
+				mCountries = new ArrayList<Category>();
 			mCountries.clear();
 			
 			Cursor cursor = mSqliteDb.query(COUNTRIES_TABLE_NAME, null, null, null, null, null, null);
@@ -263,7 +263,7 @@ public class GnewsDatabase
 					String name = cursor.getString(1);
 					String link = cursor.getString(2);
 					boolean isDefault = (cursor.getInt(3)>0);
-					mCountries.put(name, new Category(id, name, link, isDefault));
+					mCountries.add(new Category(id, name, link, isDefault));
 				} while (cursor.moveToNext());
 				
 			}
@@ -276,7 +276,7 @@ public class GnewsDatabase
 		return bRet;
 	} //loadCountries()
 	
-	public HashMap<String, Category> getCountries(boolean bReload)
+	public ArrayList<Category> getCountries(boolean bReload)
 	{
 		if (bReload)
 			loadCountries();
