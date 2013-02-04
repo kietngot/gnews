@@ -111,6 +111,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	
 	ListView lvPreconfiguredCategories = null;
 	ListView lvPersonalCategories = null;
+	TextView tvPersonalCategoriesHint = null;
 	ImageButton ibRefreshNews = null;
 	
 	GnewsDatabase mDb = null;
@@ -121,17 +122,19 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		menuOut = !menuOut;
         if (!menuOut)
             rlMenuCategories.setVisibility(View.INVISIBLE);
+        else
+        	rlMenuCategories.setVisibility(View.VISIBLE);
         layoutApp(menuOut);
 	}
 
 	@Override
 	public void onAnimationRepeat(Animation arg0) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void onAnimationStart(Animation arg0) {
-		// TODO Auto-generated method stub
+		
 	}
 	
 	boolean showOption1 = false;
@@ -267,6 +270,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		
 		lvPreconfiguredCategories = (ListView) findViewById(R.id.lvPreconfiguredCategories);
 		lvPersonalCategories = (ListView) findViewById(R.id.lvPersonalCategories);
+		tvPersonalCategoriesHint = (TextView) findViewById(R.id.tvPersonalCategoriesHint); 
 		
 		ibRefreshNews = (ImageButton) findViewById(R.id.ibRefreshNews);
 		if (ibRefreshNews!=null)
@@ -343,6 +347,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
             					mAdapterCategoryPersonal.remove(category);
             					lvPersonalCategories.refreshDrawableState();
             					Toast.makeText(this, "Personal category \"" + category.mKey + "\" deleted!", Toast.LENGTH_SHORT).show();
+            					showHidePersonalCategoriesHint();
             					
             					// If the current category is same as deleted one, 
             					//	reload the news with default category.
@@ -355,8 +360,9 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
             			}
             		}
             		lvPersonalCategories.getSelectedItem();
+            		layoutApp(menuOut);
             	}
-                return true;
+            	return super.onContextItemSelected(item);
             default:
                 return super.onContextItemSelected(item);
         }
@@ -396,6 +402,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
  		}
  		else
  		{
+ 			// TODO: Remove this - This will be obsolete.
 	 		mCountries = new HashMap<String, Category>();
 	 		mCountries.put("U.S", new Category("U.S", "us")); //ned=us
 			mCountries.put("Argentina", new Category("Argentina", "ar")); //ned=ar
@@ -431,6 +438,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
  		}
  		else
  		{
+ 			// TODO: Remove this. This will be obsolete.
 	 		mCategories = new HashMap<String, Category>();
 	 		mCategories.put("Top News", new Category("Top News", "h")); //topic=h
 	 		mCategories.put("World", new Category("World", "w")); //topic=w
@@ -464,6 +472,19 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 			lvPersonalCategories.setVisibility(View.VISIBLE);
 		else
 			lvPersonalCategories.setVisibility(View.GONE);
+		showHidePersonalCategoriesHint();
+ 	}
+ 	
+ 	private void showHidePersonalCategoriesHint()
+ 	{
+ 		if (lvPersonalCategories!=null && 
+ 				tvPersonalCategoriesHint!=null)
+ 		{
+ 			if (lvPersonalCategories.getCount()>0)
+ 				tvPersonalCategoriesHint.setVisibility(View.VISIBLE);
+ 			else
+ 				tvPersonalCategoriesHint.setVisibility(View.GONE);
+ 		}
  	}
  	
  	private void loadCategoriesList()
@@ -610,6 +631,11 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 						 {
 							 lvPersonalCategories.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
 						 }
+						 showHidePersonalCategoriesHint();
+						 
+						 // Attempting to load the newly added item.
+						 updateCurrentCategory(category.mKey);
+						 menuOut = false;
 						 layoutApp(menuOut);
 					 } //OnItemClickListener::onItemSelected::run()
 				 });

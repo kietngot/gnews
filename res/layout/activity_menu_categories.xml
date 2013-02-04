@@ -25,28 +25,14 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="5dp"
-            android:layout_below="@+id/tvPreconfiguredCategories"
             android:background="@android:color/transparent"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@android:color/transparent"
-            android:drawSelectorOnTop="false" 
-            android:listSelector="@drawable/list_selector" 
+            android:drawSelectorOnTop="false"
+            android:listSelector="@drawable/list_selector"
             android:minHeight="200dp" >
-        </ListView>
 
-        <TextView
-            android:id="@+id/tvPreconfiguredCategories"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="2dp"
-            android:padding="2dp"
-            android:text="Categories:"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/themebackgroundcolor"
-            android:textSize="20sp" />
+        </ListView>
 
     </RelativeLayout>
     
@@ -107,6 +93,19 @@
             android:listSelector="@drawable/list_selector"
             android:visibility="gone" >
         </ListView>
+        
+         <TextView
+	            android:id="@+id/tvPersonalCategoriesHint"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@+id/lvPersonalCategories"
+	            android:layout_centerHorizontal="true"
+	            android:layout_marginLeft="2dp"
+	            android:paddingLeft="2dp"
+	            android:text="@string/longpresstodelete"
+	            android:textAppearance="?android:attr/textAppearanceMedium"
+	            android:textColor="@color/darkgray"
+	            android:textSize="9sp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -115,7 +114,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:background="@color/themessemitransparentcolor"
         android:paddingBottom="10dp"
         android:paddingTop="10dp" >
 
@@ -123,16 +121,16 @@
             android:id="@+id/tvCountrySpinnerLbl"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="5dp"
-            android:background="@drawable/roundedshape"
+            android:background="@android:color/transparent"
             android:clickable="true"
             android:paddingBottom="2dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="2dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="38dp"
             android:paddingTop="2dp"
-            android:text="USA edition"
+            android:text="U.S edition"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@drawable/roundedshape"
             android:textSize="20sp" />
@@ -151,8 +149,8 @@
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/tvCountrySpinnerLbl"
             android:layout_alignRight="@+id/tvCountrySpinnerLbl"
+            android:layout_alignBottom="@+id/tvCountrySpinnerLbl"
             android:src="@android:drawable/ic_menu_more" />
 
     </RelativeLayout>
