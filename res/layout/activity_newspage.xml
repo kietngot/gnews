@@ -116,7 +116,6 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/themebackgroundcolor"
         android:textSize="16dp"
-        android:typeface="serif"
-        android:width="100dp" />
+        android:typeface="serif" />
 
 </RelativeLayout>

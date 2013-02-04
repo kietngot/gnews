@@ -833,8 +833,10 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 			public void run() {
 				displayNews(newsCat);
 				mTitleText = AppSettings.CurrentCategory + " (" + AppSettings.CurrentCountry + ")";
-				if (tvNewsItemsLoading!=null)
+				if (mNewsItemsAdapter.getCount()>0)
 					tvNewsItemsLoading.setVisibility(View.INVISIBLE);
+				else
+					showNoNews();
 			}
 		});
 	}
@@ -899,6 +901,15 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 			}
 		});
 	}
+	
+	private void showNoNews()
+	{
+		if (tvNewsItemsLoading!=null)
+		{
+			tvNewsItemsLoading.setText(R.string.nonews);
+			tvNewsItemsLoading.setVisibility(View.VISIBLE);
+		}
+	} //showNoNews()
 	
 	// Presents news category (list of news items) on UI
 	private void displayNews(NewsCategory newsCategory)
