@@ -14,7 +14,6 @@ import com.innovative.gnews.feed.NewsLoader;
 import com.innovative.gnews.utils.Utils;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
@@ -466,7 +465,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		lvPersonalCategories.setAdapter(mAdapterCategoryPersonal);
 		lvPersonalCategories.setOnItemClickListener(onPersonalCategoriesClick);
 		
-		lvPersonalCategories.setSelector(R.drawable.list_selector);
+		// Commenting this to make it work in API-10 as well.
+		//lvPersonalCategories.setSelector(R.drawable.list_selector);
 		lvPersonalCategories.setSelected(true);
 		if (mAdapterCategoryPersonal.getCount()>0)
 			lvPersonalCategories.setVisibility(View.VISIBLE);
@@ -502,7 +502,8 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     		mAdapterCategory.setNotifyOnChange(true);
     		lvPreconfiguredCategories.setAdapter(mAdapterCategory);
     		lvPreconfiguredCategories.setOnItemClickListener(onCategoriesClick);
-    		lvPreconfiguredCategories.setSelector(R.drawable.list_selector);
+    		// Commenting this to make it work in API-10 as well.
+    		//lvPreconfiguredCategories.setSelector(R.drawable.list_selector);
     		lvPreconfiguredCategories.setSelected(true);
     		lvPreconfiguredCategories.setSelection(0);
     		layoutApp(menuOut);
@@ -629,7 +630,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 						 }
 						 else
 						 {
-							 lvPersonalCategories.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
+							 lvPersonalCategories.getLayoutParams().height = ListView.LayoutParams.WRAP_CONTENT;
 						 }
 						 showHidePersonalCategoriesHint();
 						 

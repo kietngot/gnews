@@ -29,7 +29,6 @@
             android:cacheColorHint="@android:color/transparent"
             android:divider="@android:color/transparent"
             android:drawSelectorOnTop="false"
-            android:listSelector="@drawable/list_selector"
             android:minHeight="200dp" >
 
         </ListView>
@@ -90,7 +89,6 @@
             android:cacheColorHint="@android:color/transparent"
             android:divider="@android:color/transparent"
             android:drawSelectorOnTop="false"
-            android:listSelector="@drawable/list_selector"
             android:visibility="gone" >
         </ListView>
         

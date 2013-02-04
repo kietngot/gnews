@@ -56,7 +56,7 @@
 	            android:paddingLeft="1dp"
 	            android:paddingTop="0dp"
 	            android:text="Item Title"
-	            android:textColor="@color/themetextcolor"
+	            android:textColor="@drawable/news_item_selector_color"
 	            android:textSize="16dp"
 	            android:textStyle="normal" />
 	    </RelativeLayout>

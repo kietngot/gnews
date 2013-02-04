@@ -3,7 +3,6 @@
 	android:layout_width="fill_parent"
 	android:layout_height="44dp"
 	android:layout_alignParentTop="true"
-	android:background="?android:attr/activatedBackgroundIndicator" 
 	android:gravity="center_vertical"
 	android:paddingLeft="5dp"
 	android:text="Item Title"
