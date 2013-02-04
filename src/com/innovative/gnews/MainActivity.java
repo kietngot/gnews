@@ -88,6 +88,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	private TextView tvCountrySpinnerLbl = null;
 	private ImageButton ibMenuImg = null;
 	private RelativeLayout rlMainTitle = null;
+	private ImageButton ibDeveloperInfo = null;
 	private ImageButton ibPersonalCategoriesAdd = null;
 	private TextView tvTitle = null;
 	
@@ -253,6 +254,10 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
         ibMenuImg = (ImageButton) findViewById(R.id.ibMenuImg);
         if (ibMenuImg!=null)
         	ibMenuImg.setOnClickListener(mBtnClickListener);
+        
+        ibDeveloperInfo = (ImageButton) findViewById(R.id.ibDeveloperInfo);
+		if (ibDeveloperInfo!=null)
+			ibDeveloperInfo.setOnClickListener(mBtnClickListener);
         
         ibPersonalCategoriesAdd = (ImageButton) findViewById(R.id.ibPersonalCategoriesAdd);
         if (ibPersonalCategoriesAdd!=null)
@@ -537,6 +542,13 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
         	case R.id.rlMainTitle: //m_btnHome
         	case R.id.ibMenuImg:
         		animateToggleCategoriesMenu();
+        		break;
+        		
+        	case R.id.ibDeveloperInfo:
+        		{
+        			Intent pageIntent = new Intent(MainActivity.this, InfoActivity.class);
+	    			startActivityForResult(pageIntent, 1);
+        		}
         		break;
         		
         	case R.id.tvCountrySpinnerLbl:

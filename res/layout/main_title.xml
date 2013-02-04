@@ -54,4 +54,13 @@
         android:textSize="22dp"
         android:textStyle="normal" />
 
+    <ImageButton
+        android:id="@+id/ibDeveloperInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/infobtn" 
+        android:scaleType="center" />
+
 </RelativeLayout>

@@ -1,19 +1,15 @@
 package com.innovative.gnews;
 import com.innovative.gnews.R;
-
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class Titlebar {
 	private static final int CATEGORIES_MENU_WIDTH = 150;
@@ -57,7 +53,7 @@ public class Titlebar {
 		//m_ibMenuImg = (ImageButton) activity.findViewById(R.id.ibMenuImg);
         //if (m_ibMenuImg!=null)
         	//m_ibMenuImg.setOnClickListener(mBtnClickListener);
-        
+		
         m_tvTitle = (TextView) activity.findViewById(R.id.tvAppTitle);
         if (m_tvTitle!=null)
         	m_tvTitle.setText(titleString);
@@ -76,7 +72,7 @@ public class Titlebar {
 		Reset();
 		m_activity = activity;
 		m_context = m_activity.getApplicationContext();
-				
+		
 		ibNewsList = (ImageButton) activity.findViewById(R.id.ibNewsList);
 		if (ibNewsList!=null)
 			ibNewsList.setOnClickListener(mBtnClickListener);
