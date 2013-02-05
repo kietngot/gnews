@@ -116,9 +116,9 @@ public class NewsPageActivity extends Activity {
 		WebSettings webSettings = wvNewsPage.getSettings();
 		webSettings.setJavaScriptEnabled(AppSettings.JavascriptEnabled);
 		if (AppSettings.JavascriptEnabled)
-			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_browser_javascript_yes));
+			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.javascriptyesbutton));
 		else
-			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_browser_javascript_no));
+			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.javascriptnobutton));
 		
 	} //init()
 	
@@ -159,13 +159,13 @@ public class NewsPageActivity extends Activity {
         		webSettings.setJavaScriptEnabled(AppSettings.JavascriptEnabled);
         		if (AppSettings.JavascriptEnabled)
         		{
-        			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_browser_javascript_yes));
+        			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.javascriptyesbutton));
         			Toast.makeText(NewsPageActivity.this, "Javascript enabled. Please note that this can cause security issues, make sure you trust the webpage.", 
         					Toast.LENGTH_LONG).show();
         		}
         		else
         		{
-        			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_browser_javascript_no));
+        			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.javascriptnobutton));
         			Toast.makeText(NewsPageActivity.this, "Javascript disabled", Toast.LENGTH_SHORT).show();
         		}
         		break;

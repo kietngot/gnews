@@ -1,28 +1,80 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/themebackgroundcolor" >
 
-    <TextView
-        android:id="@+id/textView1"
+	<TextView
+        android:id="@+id/tvInfoAppname"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="46dp"
         android:background="@color/themebasecolor"
         android:gravity="center_horizontal|center_vertical"
         android:text="@string/app_name"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/themebackgroundcolor" />
+        android:textColor="@color/themebackgroundcolor" 
+		android:textSize="20dp"
+		android:textStyle="bold" />
+		
+	<ImageView
+        android:id="@+id/ivInfoAppIcon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@+id/tvInfoAppname"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_launcher" />
+	
+	<TextView
+        android:id="@+id/tvInfoVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivInfoAppIcon"
+        android:layout_centerHorizontal="true"
+        android:text="Version 1.0"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/darkgray" 
+		android:textSize="12dp" />
+		
+	<TextView
+        android:id="@+id/tvInfoCopyright"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvInfoVersion"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:text=" @2013 John K Gummadi"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/darkgray"
+        android:textStyle="bold" 
+		android:textSize="14dp" />
+		
+	<TextView
+        android:id="@+id/tvInfoFeedback"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvInfoCopyright"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="7dp"
+        android:clickable="true"
+        android:text="Send feedback or report a problem"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#5080ff"
+        android:textStyle="bold" 
+		android:textSize="14dp" />
+		
+    <WebView
+        android:id="@+id/wvInfoDescription"
+		android:layout_below="@+id/tvInfoFeedback"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+		android:layout_marginTop="14dp"/>
 
-    <TextView
-        android:id="@+id/textView2"
+    <ImageButton
+        android:id="@+id/ibInfoBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView1"
-        android:padding="7dp"
-        android:text="Hello, my name is John Gummadi, the developer of this app. This is my first app, and I&apos;ve done it for fun and may be get noticed by employers. If you like my work and would like me to work for you (full time/part time/free lancing), shoot me an email."
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/themesidemenubackcolor" />
-    
+        android:layout_alignParentTop="true"
+        android:background="@drawable/backbrowserbutton"/>
+
 </RelativeLayout>

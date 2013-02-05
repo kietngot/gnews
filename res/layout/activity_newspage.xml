@@ -94,7 +94,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
-            android:background="@drawable/ic_browser_javascript_no" />
+            android:background="@drawable/javascriptnobutton" />
 
     </RelativeLayout>
 
