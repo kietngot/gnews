@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.opengl.Visibility;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -16,6 +17,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.graphics.Bitmap;
@@ -35,6 +37,8 @@ public class NewsPageActivity extends Activity {
 	ImageButton ibBrowserForward = null;
 	ImageButton ibBrowserRefresh = null;
 	ImageButton ibBrowserJavascript = null;
+	
+	RelativeLayout rlFooter = null;
 	
 	String mNewsPageURL = null;
 	
@@ -87,6 +91,8 @@ public class NewsPageActivity extends Activity {
 			tvPageLoading.setVisibility(View.VISIBLE);
 		}
 		
+		rlFooter = (RelativeLayout)findViewById(R.id.rlFooter);
+		
 		// Get preferences
 		// Get page URL 
 		Bundle extras = getIntent().getExtras();
@@ -120,6 +126,14 @@ public class NewsPageActivity extends Activity {
 		else
 			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.javascriptnobutton));
 		
+		// Trying to allow zoom in WebView, but this is not working. 
+		//	May be we have to implement pinch gesture manually and zoom there.
+		wvNewsPage.getSettings().setBuiltInZoomControls(true);
+		wvNewsPage.setTag(false); //full-screen is false
+		
+		// TODO: This is consuming scroll events. Fix this.
+		//wvNewsPage.setOnTouchListener(touchListener);
+		
 	} //init()
 	
 	private void updateJavascriptEnabled(boolean value)
@@ -129,6 +143,43 @@ public class NewsPageActivity extends Activity {
     	if (mDb!=null)
     		mDb.setSetting("JavaScriptEnabled", value?"1":"0");
     } //updateJavascriptEnabled()
+	
+
+	View.OnTouchListener touchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if(event.getAction() == MotionEvent.ACTION_DOWN) 
+            {
+                return true;
+            } 
+            else if(event.getAction() == MotionEvent.ACTION_UP) 
+            {
+                // Button was released, reset button background
+            	long downTime = android.os.SystemClock.elapsedRealtime() - event.getDownTime();            	
+            	if (downTime<200)
+            	{
+            		NewsPageActivity.this.runOnUiThread(new Runnable() 
+                	{
+    					 public void run() 
+    					 {
+    						 if (wvNewsPage!=null && rlFooter!=null)
+    						 {
+    							 boolean bFullScreen = (Boolean) wvNewsPage.getTag();
+    							 bFullScreen = !bFullScreen;
+    							 rlFooter.setVisibility(bFullScreen?View.GONE:View.VISIBLE);
+    							 //NewsPageActivity.this.requestWindowFeature(bFullScreen?Window.FEATURE_NO_TITLE:Window.FEATURE_CUSTOM_TITLE);
+    							 wvNewsPage.setTag(bFullScreen);
+    						 }
+    					 } //run()
+    				 }); //runOnUiThread()
+            		return false;
+            	}
+                return true;
+            }
+            return true;
+        }
+
+    };
 	
 	private OnClickListener mBtnClickListener = new OnClickListener() {
         public void onClick(View v) {
