@@ -3,13 +3,9 @@ import com.innovative.gnews.db.GnewsDatabase;
 import com.innovative.gnews.utils.Utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.opengl.Visibility;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -17,7 +13,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +28,7 @@ public class NewsPageActivity extends Activity {
 	// Controls
 	WebViewEx wvNewsPage = null;
 	TextView tvPageLoading = null;
-	
+	ImageButton ibBrowserOpenInButton = null;
 	ImageButton ibBrowserBack = null;
 	ImageButton ibBrowserForward = null;
 	ImageButton ibBrowserRefresh = null;
@@ -102,6 +97,10 @@ public class NewsPageActivity extends Activity {
 			Titlebar.InitTitlebar(this, mNewsPageURL, null);
 		
 		// Buttons and listeners
+		ibBrowserOpenInButton = (ImageButton)findViewById(R.id.ibBrowserOpenInButton);
+		if (ibBrowserOpenInButton!=null)
+			ibBrowserOpenInButton.setOnClickListener(mBtnClickListener);
+		
 		ibBrowserBack = (ImageButton)findViewById(R.id.ibBrowserBack);
 		if (ibBrowserBack!=null)
 			ibBrowserBack.setOnClickListener(mBtnClickListener);
@@ -141,6 +140,11 @@ public class NewsPageActivity extends Activity {
         	int id = v.getId();
         	switch (id)
         	{
+        	case R.id.ibBrowserOpenInButton:
+        		Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(wvNewsPage.getUrl()));
+        		startActivity(browserIntent);
+        		break;
+        		
         	case R.id.ibBrowserBack: //m_btnHome
         		if (wvNewsPage!=null)
         			wvNewsPage.goBack();

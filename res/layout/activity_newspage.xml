@@ -2,50 +2,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/themebackgroundcolor" xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- Titlebar for this view -->
-    <!-- 	<RelativeLayout
-	    android:id="@+id/rlNewsPageTitlebar"
-	    android:layout_width="match_parent"
-	    android:layout_height="50dp"
-	    android:layout_alignParentLeft="true"
-	    android:layout_alignParentTop="true" >
-	    
-	    <ImageButton
-	        android:id="@+id/ibNewsList"
-	        android:layout_width="43dp"
-	        android:layout_height="43dp"
-	        android:layout_alignParentLeft="true"
-	        android:layout_centerVertical="true"
-	        android:background="@drawable/buttonstyle"
-	        android:src="@drawable/ic_newslist" />
-
-	    <ImageView
-	        android:id="@+id/ibPageFavIcon"
-	        android:layout_width="20dp"
-	        android:layout_height="20dp"
-	        android:layout_centerVertical="true"
-	        android:layout_marginLeft="5dp"
-	        android:layout_toRightOf="@+id/ibNewsList"
-	        android:background="@color/themebackgroundcolor"
-	        android:src="@drawable/ic_webkit" />
-
-	    <TextView
-	        android:id="@+id/tvPageUrl"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignBottom="@+id/ibPageFavIcon"
-	        android:layout_alignParentRight="true"
-	        android:layout_marginLeft="3dp"
-	        android:layout_toRightOf="@+id/ibPageFavIcon"
-	        android:text="Loading..."
-	        android:singleLine="true"
-	        android:scrollHorizontally="true"
-	        android:textColorHint="@color/themetextcolor"
-	        android:textSize="16dp" />
-
-	</RelativeLayout> 
-	-->
 	
 	<include 
         android:id="@+id/rlNewspageTitle" 
@@ -53,6 +9,12 @@
         android:layout_alignParentTop="true" 
         android:background="@color/themebackgroundcolor" />
 	
+	<!--
+	when we use this custom class, the designer throws exception.
+	So whenever you want to preview in the designer, change  
+	"com.innovative.gnews.WebViewEx" to "WebView" and change it back
+	when done!
+	-->
 	<com.innovative.gnews.WebViewEx
 	    android:id="@+id/wvNewsPage"
         android:layout_width="match_parent"
@@ -69,6 +31,15 @@
         android:background="@color/themebasecolor" >
 
         <ImageButton
+            android:id="@+id/ibBrowserBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/backbrowserbutton" />
+        
+        <ImageButton
             android:id="@+id/ibBrowserForward"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,19 +49,11 @@
             android:background="@drawable/forwardbrowserbutton" />
 
         <ImageButton
-            android:id="@+id/ibBrowserBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:background="@drawable/backbrowserbutton" />
-
-        <ImageButton
             android:id="@+id/ibBrowserRefresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@+id/ibBrowserForward"
+            android:layout_marginLeft="16dp"
             android:layout_centerVertical="true"
             android:background="@drawable/refreshbrowserbutton" />
 
@@ -98,10 +61,19 @@
             android:id="@+id/ibBrowserJavascript"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@+id/ibBrowserRefresh"
+            android:layout_marginLeft="16dp"
             android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
             android:background="@drawable/javascriptnobutton" />
+        
+        <ImageButton
+            android:id="@+id/ibBrowserOpenInButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="3dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/browserbutton" />
 
     </RelativeLayout>
 
