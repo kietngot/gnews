@@ -49,13 +49,17 @@ public class NewsPageActivity extends Activity {
         Titlebar.InitTitlebar(this, getString(R.string.loading), null);
 		mDb = GnewsDatabase.getDatabase();
 		init();
+		doLoadPage();
     } //onCreate()
 	
 	@Override
 	public void onStart() 
 	{
 		super.onStart();
-		
+	}
+	
+	private void doLoadPage()
+	{
 		if (!Utils.checkInternetConnection(this, true, tvPageLoading))
 			return;
 		
@@ -67,7 +71,7 @@ public class NewsPageActivity extends Activity {
             } //run()
           });
         th1.start(); //new Thread
-	}
+	} //doLoadPage()
 	
 	private void init() 
 	{

@@ -849,8 +849,9 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	public void loadNewsCategoryFailed() {
 		MainActivity.this.runOnUiThread(new Runnable() {
 			public void run() {
-				if (tvNewsItemsLoading!=null)
-					tvNewsItemsLoading.setVisibility(View.GONE);
+				showFailedNews();
+				//if (tvNewsItemsLoading!=null)
+					//tvNewsItemsLoading.setVisibility(View.GONE);
 				if (ibRefreshNews!=null)
 					ibRefreshNews.setEnabled(true);
 			}
@@ -916,6 +917,15 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 			tvNewsItemsLoading.setVisibility(View.VISIBLE);
 		}
 	} //showNoNews()
+	
+	private void showFailedNews()
+	{
+		if (tvNewsItemsLoading!=null)
+		{
+			tvNewsItemsLoading.setText(R.string.newsfailed);
+			tvNewsItemsLoading.setVisibility(View.VISIBLE);
+		}
+	} //showFailedNews()
 	
 	// Presents news category (list of news items) on UI
 	private void displayNews(NewsCategory newsCategory)

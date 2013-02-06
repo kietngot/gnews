@@ -7,6 +7,7 @@
     <string name="loading">Loading&#8230;</string>
     <string name="nonetwork">No internet connection</string>
     <string name="nonews">No news results found</string>
+    <string name="newsfailed">Failed to load news</string>
     <string name="category_topnews">Top news</string>
     <string name="category_technews">Technology</string>
     <string name="delete">Delete</string>
