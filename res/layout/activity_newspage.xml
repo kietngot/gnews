@@ -55,14 +55,13 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:background="@drawable/refreshbrowserbutton" />
-
+        
         <ImageButton
             android:id="@+id/ibBrowserJavascript"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
             android:layout_toLeftOf="@+id/ibBrowserOpenInButton"
-            android:layout_marginRight="16dp"
-            android:layout_centerVertical="true"
             android:background="@drawable/javascriptnobutton" />
         
         <ImageButton
