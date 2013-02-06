@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.opengl.Visibility;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,7 +31,7 @@ import android.graphics.Bitmap;
 */
 public class NewsPageActivity extends Activity {
 	// Controls
-	WebView wvNewsPage = null;
+	WebViewEx wvNewsPage = null;
 	TextView tvPageLoading = null;
 	
 	ImageButton ibBrowserBack = null;
@@ -38,6 +39,7 @@ public class NewsPageActivity extends Activity {
 	ImageButton ibBrowserRefresh = null;
 	ImageButton ibBrowserJavascript = null;
 	
+	RelativeLayout rlTitlebar = null;
 	RelativeLayout rlFooter = null;
 	
 	String mNewsPageURL = null;
@@ -47,15 +49,9 @@ public class NewsPageActivity extends Activity {
 	@Override
     public void onCreate(Bundle savedInstanceState) {		
     	super.onCreate(savedInstanceState);
-        final boolean customTitleSupported = requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+    	this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_newspage);
-        
-        // We can access custom title elements only after setting FEATURE_CUSTOM_TITLE
-		if ( customTitleSupported ) {
-			getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.newpage_title);
-			Titlebar.InitTitlebar(this, getString(R.string.loading), null);
-		}
-		
+        Titlebar.InitTitlebar(this, getString(R.string.loading), null);
 		mDb = GnewsDatabase.getDatabase();
 		init();
     } //onCreate()
@@ -80,7 +76,7 @@ public class NewsPageActivity extends Activity {
 	
 	private void init() 
 	{
-		wvNewsPage = (WebView) findViewById(R.id.wvNewsPage);
+		wvNewsPage = (WebViewEx) findViewById(R.id.wvNewsPage);
 		if (wvNewsPage==null)
 			return;
 		
@@ -91,7 +87,10 @@ public class NewsPageActivity extends Activity {
 			tvPageLoading.setVisibility(View.VISIBLE);
 		}
 		
+		rlTitlebar = (RelativeLayout) findViewById(R.id.rlNewspageTitle);
 		rlFooter = (RelativeLayout)findViewById(R.id.rlFooter);
+		
+		wvNewsPage.setAtributes(rlTitlebar, rlFooter);
 		
 		// Get preferences
 		// Get page URL 
@@ -119,22 +118,14 @@ public class NewsPageActivity extends Activity {
 		if (ibBrowserJavascript!=null)
 			ibBrowserJavascript.setOnClickListener(mBtnClickListener);
 		
-		WebSettings webSettings = wvNewsPage.getSettings();
-		webSettings.setJavaScriptEnabled(AppSettings.JavascriptEnabled);
+		//WebSettings webSettings = wvNewsPage.getSettings();
+		//webSettings.setJavaScriptEnabled(AppSettings.JavascriptEnabled);
 		if (AppSettings.JavascriptEnabled)
 			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.javascriptyesbutton));
 		else
 			ibBrowserJavascript.setBackgroundDrawable(getResources().getDrawable(R.drawable.javascriptnobutton));
-		
-		// Trying to allow zoom in WebView, but this is not working. 
-		//	May be we have to implement pinch gesture manually and zoom there.
-		wvNewsPage.getSettings().setBuiltInZoomControls(true);
-		wvNewsPage.setTag(false); //full-screen is false
-		
-		// TODO: This is consuming scroll events. Fix this.
-		//wvNewsPage.setOnTouchListener(touchListener);
-		
 	} //init()
+	
 	
 	private void updateJavascriptEnabled(boolean value)
     {
@@ -144,42 +135,6 @@ public class NewsPageActivity extends Activity {
     		mDb.setSetting("JavaScriptEnabled", value?"1":"0");
     } //updateJavascriptEnabled()
 	
-
-	View.OnTouchListener touchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            if(event.getAction() == MotionEvent.ACTION_DOWN) 
-            {
-                return true;
-            } 
-            else if(event.getAction() == MotionEvent.ACTION_UP) 
-            {
-                // Button was released, reset button background
-            	long downTime = android.os.SystemClock.elapsedRealtime() - event.getDownTime();            	
-            	if (downTime<200)
-            	{
-            		NewsPageActivity.this.runOnUiThread(new Runnable() 
-                	{
-    					 public void run() 
-    					 {
-    						 if (wvNewsPage!=null && rlFooter!=null)
-    						 {
-    							 boolean bFullScreen = (Boolean) wvNewsPage.getTag();
-    							 bFullScreen = !bFullScreen;
-    							 rlFooter.setVisibility(bFullScreen?View.GONE:View.VISIBLE);
-    							 //NewsPageActivity.this.requestWindowFeature(bFullScreen?Window.FEATURE_NO_TITLE:Window.FEATURE_CUSTOM_TITLE);
-    							 wvNewsPage.setTag(bFullScreen);
-    						 }
-    					 } //run()
-    				 }); //runOnUiThread()
-            		return false;
-            	}
-                return true;
-            }
-            return true;
-        }
-
-    };
 	
 	private OnClickListener mBtnClickListener = new OnClickListener() {
         public void onClick(View v) {
@@ -281,18 +236,4 @@ public class NewsPageActivity extends Activity {
 		
 		wvNewsPage.loadUrl(mNewsPageURL);
 	} //loadPage
-	
-	
-	
-	/*
-	// TODO: Use this when we ad controls to the footer
-	private OnClickListener mClickListener = new OnClickListener() 
-	{
-		public void onClick(View v) 
-		{
-			int id = v.getId();
-		} //onClick()
-	}; //OnClickListener
-	*/
-	
 } //class NewsPageActivity

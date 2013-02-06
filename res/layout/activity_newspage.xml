@@ -46,13 +46,20 @@
 
 	</RelativeLayout> 
 	-->
-    <WebView
-        android:id="@+id/wvNewsPage"
+	
+	<include 
+        android:id="@+id/rlNewspageTitle" 
+        layout="@layout/newpage_title"
+        android:layout_alignParentTop="true" 
+        android:background="@color/themebackgroundcolor" />
+	
+	<com.innovative.gnews.WebViewEx
+	    android:id="@+id/wvNewsPage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/rlFooter"
-        android:layout_below="@+id/rlNewsPageTitlebar" >
-    </WebView>
+        android:layout_below="@+id/rlNewspageTitle" >
+	</com.innovative.gnews.WebViewEx>
 
     <RelativeLayout
         android:id="@+id/rlFooter"
@@ -103,7 +110,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_alignTop="@+id/wvNewsPage"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:background="@color/themebasecolor"
