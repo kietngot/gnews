@@ -293,6 +293,12 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 			AppSettings.JavascriptEnabled = (Integer.parseInt(jsEnabledStr)==0)?false:true;
 		}
 		
+		// TODO: Tried to get current country from GPS location, but its tricky to match with country names
+		//	that we have. Like "U.S" doesn't match with "US" or "United States".
+		// FIX THIS.
+		// This needs android.permission.ACCESS_FINE_LOCATION.
+		//AppSettings.updateCurrentCountry(this);
+		
 		// Menu items
 		prepareCategoriesMap();
 		loadCountryFeedList();
