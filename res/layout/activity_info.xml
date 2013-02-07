@@ -3,11 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/themebackgroundcolor" >
-
+    
 	<TextView
         android:id="@+id/tvInfoAppname"
         android:layout_width="match_parent"
-        android:layout_height="46dp"
+        android:layout_height="54dp"
         android:background="@color/themebasecolor"
         android:gravity="center_horizontal|center_vertical"
         android:text="@string/app_name"
@@ -47,20 +47,20 @@
         android:textColor="@color/darkgray"
         android:textStyle="bold" 
 		android:textSize="14dp" />
-		
+		
 	<TextView
-        android:id="@+id/tvInfoFeedback"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvInfoCopyright"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="7dp"
-        android:clickable="true"
-        android:text="Send feedback or report a problem"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#5080ff"
-        android:textStyle="bold" 
-		android:textSize="14dp" />
+	    android:id="@+id/tvInfoFeedback"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/tvInfoCopyright"
+	    android:layout_centerHorizontal="true"
+	    android:layout_marginTop="7dp"
+	    android:clickable="true"
+	    android:text="Send feedback or report a problem"
+	    android:textAppearance="?android:attr/textAppearanceMedium"
+	    android:textColor="@drawable/hyperlinkex"
+	    android:textSize="14dp"
+	    android:textStyle="bold" />
 		
     <WebView
         android:id="@+id/wvInfoDescription"

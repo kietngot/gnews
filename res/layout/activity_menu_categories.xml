@@ -91,19 +91,20 @@
             android:drawSelectorOnTop="false"
             android:visibility="gone" >
         </ListView>
-        
+        
          <TextView
-	            android:id="@+id/tvPersonalCategoriesHint"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_below="@+id/lvPersonalCategories"
-	            android:layout_centerHorizontal="true"
-	            android:layout_marginLeft="2dp"
-	            android:paddingLeft="2dp"
-	            android:text="@string/longpresstodelete"
-	            android:textAppearance="?android:attr/textAppearanceMedium"
-	            android:textColor="@color/darkgray"
-	            android:textSize="9sp" />
+             android:id="@+id/tvPersonalCategoriesHint"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_below="@+id/lvPersonalCategories"
+             android:layout_centerHorizontal="true"
+             android:layout_marginLeft="2dp"
+             android:paddingLeft="2dp"
+             android:text="@string/longpresstodelete"
+             android:textAppearance="?android:attr/textAppearanceMedium"
+             android:textColor="@color/themebackgroundcolor"
+             android:textSize="9sp" />
+
     </RelativeLayout>
 
     <RelativeLayout
