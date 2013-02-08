@@ -25,11 +25,14 @@ public class InfoActivity extends Activity {
         
         wvInfoDescription = (WebView) findViewById(R.id.wvInfoDescription);
         if (wvInfoDescription!=null){
-        	wvInfoDescription.loadData("<html><body>I&apos;ve built this version of Gnews app to " +
-        			"give the user a joyous experience of news reading on a mobile phone, with clean and elegant interface. " +
-        			"If you like the app, please be vocal and <a href=\"market://details?id=com.innovative.gnews\">rate the app and/or write a review</a>. And if " +
+        	// To take the user to reviews page in Google play
+        	// https://play.google.com/store/apps/details?id=name.galley.android.web.googlenewsregion&feature=search_result&write_review=true#?t=W251bGwsMSwxLDEsImNvbS5mYWNlYm9vay5rYXRhbmEiXQ..
+        	// https://play.google.com/store/apps/details?id=com.innovative.gnews&feature=search_result&write_review=true#?t=W251bGwsMSwxLDEsImNvbS5mYWNlYm9vay5rYXRhbmEiXQ..
+        	wvInfoDescription.loadData("<html><body>I&apos;ve built this Gnews app to " +
+        			"give users a clean and elegant news reading experience. " +
+        			"If you like the app, please <a href=\"market://details?id=com.innovative.gnews&write_review=true#?t=W251bGwsMSwxLDEsImNvbS5mYWNlYm9vay5rYXRhbmEiXQ..\">rate the app and/or write a review</a>. And if " +
         			"would like to know more about me (professionally), <a href=\"mailto:johngummadi@gmail.com?" +
-        			"Subject=Hello from Gnews user\"> shoot me an email</a>. And oh, BTW this app or I have no relation with " +
+        			"Subject=Hello from Gnews user\"> shoot me an email</a>. And oh, BTW this app or I have no association with " +
         			"Google, Inc. <br><br>- John Gummadi!</body></html>", 
         			"text/html", "UTF-8");
         }
