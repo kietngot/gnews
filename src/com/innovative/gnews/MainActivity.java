@@ -771,15 +771,9 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     		if (pos>0)
     			lvPreconfiguredCategories.setSelection(pos);
     	}
-    	
-    	String url = "";
     	Category category = mCategories.get(AppSettings.CurrentCategory);
     	Category country = getCountryByKey(AppSettings.CurrentCountry);
-    	if (category.mPredefinedCategory)
-    		url = "http://news.google.com/news?ned=" + country.mUrlItem + "&topic=" + category.mUrlItem + "&output=rss&num=25";
-    	else
-    		url = "http://news.google.com/news?ned=" + country.mUrlItem + "&q=" + category.mUrlItem + "&output=rss&num=25";
-    	if (mNewsLoader.loadNewsCategory(url))
+    	if (mNewsLoader.loadNewsCategory(country, category))
     	{
     		if (ibRefreshNews!=null)
     			ibRefreshNews.setEnabled(false);
@@ -835,9 +829,15 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     }
 
 	@Override
-	public void loadNewsCategorySuccess(NewsCategory newsCategory) {
+	public void loadNewsCategorySuccess(NewsCategory newsCategory, Category currentCountry, Category currentCategory) {
 		// TODO: send the UI a message to update the news
 		//newsCategory.mCopyright = newsCategory.mCopyright;
+		if (!AppSettings.CurrentCountry.equalsIgnoreCase(currentCountry.mKey) || 
+				!AppSettings.CurrentCategory.equalsIgnoreCase(currentCategory.mKey))
+		{
+			// This result doesn't belong in this session, ignore. We'll get another event for the latest request.
+			return;
+		}
 		final NewsCategory newsCat = newsCategory;
 		MainActivity.this.runOnUiThread(new Runnable() {
 			public void run() {
@@ -852,7 +852,14 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	}
 
 	@Override
-	public void loadNewsCategoryFailed() {
+	public void loadNewsCategoryFailed(Category currentCountry, Category currentCategory) {
+		if (!AppSettings.CurrentCountry.equalsIgnoreCase(currentCountry.mKey) || 
+				!AppSettings.CurrentCategory.equalsIgnoreCase(currentCategory.mKey))
+		{
+			// This result doesn't belong in this session, ignore. We'll get another event for the latest request.
+			return;
+		}
+		
 		MainActivity.this.runOnUiThread(new Runnable() {
 			public void run() {
 				showFailedNews();
@@ -865,10 +872,18 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	}
 	
 	@Override
-	public void thumbLoaded(final String itemTitle, final Bitmap thumb)
+	public void thumbLoaded(final String itemTitle, final Bitmap thumb, Category currentCountry, Category currentCategory)
 	{
 		int tmp = 0;
 		tmp = 1;
+		
+		if (!AppSettings.CurrentCountry.equalsIgnoreCase(currentCountry.mKey) || 
+				!AppSettings.CurrentCategory.equalsIgnoreCase(currentCategory.mKey))
+		{
+			// This result doesn't belong in this session, ignore. We'll get another event for the latest request.
+			return;
+		}
+		
 		// TODO: The update in this function seems to be unnecessary!
 		MainActivity.this.runOnUiThread(new Runnable() {
 			public void run() {
@@ -899,8 +914,14 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	}
 	
 	@Override
-	public void allThumbsLoaded()
+	public void allThumbsLoaded(Category currentCountry, Category currentCategory)
 	{
+		if (!AppSettings.CurrentCountry.equalsIgnoreCase(currentCountry.mKey) || 
+				!AppSettings.CurrentCategory.equalsIgnoreCase(currentCategory.mKey))
+		{
+			// This result doesn't belong in this session, ignore. We'll get another event for the latest request.
+			return;
+		}
 		MainActivity.this.runOnUiThread(new Runnable() {
 			public void run() {
 				int count = mNewsItemsList.getCount();

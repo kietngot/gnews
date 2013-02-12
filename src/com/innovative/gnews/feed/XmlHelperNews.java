@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.UUID;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -24,12 +25,60 @@ public class XmlHelperNews extends DefaultHandler {
 	private NewsItem mTmpNewsItem = null;
 	private String mTmpText = "";
 	
-	XmlHelperNews()
-	{
+	private boolean mStopParsing = false;
+	private Object mStopParsingLock = new Object();
+	
+	private boolean mIsParsing = false;
+	private Object mIsParsingLock = new Object();
+	
+	private Object mParsingLock = new Object();
+		
+	private void setIsParsing(boolean bIsParsing) {
+		synchronized(mIsParsingLock) {
+			mIsParsing = bIsParsing;
+		}
+	} //setParsing()
+	
+	private void setStopParsing(boolean stopParsing) {
+		synchronized(mStopParsingLock) {
+			mStopParsing = stopParsing;
+		}
+	} //setParsing()
+	
+	private boolean stopRequested() {
+		boolean bStopRequested = false;
+		synchronized(mStopParsingLock) {
+			bStopRequested = mStopParsing;
+		}
+		return bStopRequested;
+	} //stopRequested()
+	
+	XmlHelperNews() {
+		mStopParsing = false;
+		mIsParsing = false;
 	}
+	
+	public void waitForParsing() {
+		try {
+			mParsingLock.wait();
+		} 
+		catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	} //waitForParsing()()
+	
+	public boolean isParsing() {
+		return mIsParsing;
+	} //isParsing()
+	
+	public void stopParsing() {
+		setStopParsing(true);
+	} //setParsing()
 	
 	public NewsCategory parseNewsFeedFromXmlFile(String xmlFilePath) {
 		FileInputStream fstream = null;
+		setIsParsing(false);
 		try 
 		{
 			fstream = new FileInputStream(xmlFilePath);
@@ -44,15 +93,13 @@ public class XmlHelperNews extends DefaultHandler {
 		return null;
 	} //parseBooksFromXmlFile()
 	
-	public NewsCategory parseNewsFeedFromXmlString(String xmlString)
-	{
+	
+	public NewsCategory parseNewsFeedFromXmlString(String xmlString) {
 		InputStream inStream = null;
-		try 
-		{
+		try {
 			inStream = new ByteArrayInputStream(xmlString.getBytes("UTF8"));
 		}
-		catch (UnsupportedEncodingException e) 
-		{
+		catch (UnsupportedEncodingException e) {
 			inStream = null;
 			e.printStackTrace();
 		}
@@ -61,95 +108,89 @@ public class XmlHelperNews extends DefaultHandler {
 		return null;
 	} //parseBooksFromXmlString()
 	
-	public NewsCategory parseNewsFeedFromXmlStream(InputStream inStream) 
-	{
-		SAXParserFactory spf = SAXParserFactory.newInstance();
-		if (inStream==null)
-			return null;
-		
-		try
-		{
-			//get a new instance of parser
-			SAXParser sp = spf.newSAXParser();
+	
+	public NewsCategory parseNewsFeedFromXmlStream(InputStream inStream) {
+		synchronized(mParsingLock) {
+			SAXParserFactory spf = SAXParserFactory.newInstance();
+			if (inStream==null)
+				return null;
 			
-			//parse
-			sp.parse(inStream, this);
-		}
-		catch(SAXException se) 
-		{
-			mNewsCategory = null;
-			se.printStackTrace();
-		}
-		catch(ParserConfigurationException pce) 
-		{
-			mNewsCategory = null;
-			pce.printStackTrace();
-		}
-		catch (IOException ie) 
-		{
-			mNewsCategory = null;
-			ie.printStackTrace();
-		}
+			try {
+				setIsParsing(true);
+				//get a new instance of parser
+				SAXParser sp = spf.newSAXParser();
+				
+				//parse
+				sp.parse(inStream, this);
+			}
+			catch (Exception e) {
+				mNewsCategory = null;
+				e.printStackTrace();
+			}
+			setIsParsing(false);
+			setStopParsing(false); //reset the stopParsing flag to false here, coz we're no more parsing now.
+			mParsingLock.notifyAll();
+		} //synchronized(mParsingLock)
 		return mNewsCategory;
 	} //parseBooksFromXmlStream()
 	
-	int makeInt(String intValueStr)
-	{
+	
+	private int makeInt(String intValueStr) {
 		if (intValueStr==null || intValueStr.length()<=0)
 			return 0;
 		return Integer.parseInt(intValueStr);
-	}
+	} //makeInt()
+	
+	
 	//Event Handlers
 	@Override
-	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException 
-	{
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		if (stopRequested())
+			throw new SAXException("\nXmlHelperNews::startElement - Stop requested");
 		//reset
 		mTmpText = "";
-		
-		if(localName.equalsIgnoreCase("channel"))
-		{
+		if(localName.equalsIgnoreCase("channel")) {
 			mTmpNewsItem = null;
 			mTmpNewsImage = null;
 			mNewsCategory = new NewsCategory();
 			mNewsCategory.mItemFeedMap = new HashMap<String, NewsItem>();
 		}
-		else if(localName.equalsIgnoreCase("image"))
-		{
+		else if(localName.equalsIgnoreCase("image")) {
 			mTmpNewsImage = new NewsImage();
 		}
-		else if(localName.equalsIgnoreCase("item"))
-		{
+		else if(localName.equalsIgnoreCase("item")) {
 			mTmpNewsItem = new NewsItem();
 		}
-		else if (mTmpNewsItem!=null && localName.equalsIgnoreCase("guid"))
-		{
+		else if (mTmpNewsItem!=null && localName.equalsIgnoreCase("guid")) {
 			String tmpStr = attributes.getValue("isPermaLink");
 			mTmpNewsItem.mIsGuidPermanentLink = tmpStr.equalsIgnoreCase("true");
 		}
-	}
+	} //startElement()
+	
 	
 	@Override
-	public void characters(char[] ch, int start, int length) throws SAXException 
-	{
+	public void characters(char[] ch, int start, int length) throws SAXException {
+		if (stopRequested())
+			throw new SAXException("\nXmlHelperNews::characters - Stop requested");
 		String tmpText = new String(ch,start,length);
 		mTmpText += tmpText.trim();
-	}
+	} //characters()
+	
 	
 	@Override
-	public void endElement(String uri, String localName, String qName) throws SAXException 
-	{
+	public void endElement(String uri, String localName, String qName) throws SAXException {
+		if (stopRequested())
+			throw new SAXException("\nXmlHelperNews::characters - Stop requested");
+		
 		if (mNewsCategory==null)
 			return;
-		if (mTmpNewsItem != null)
-		{
-			if(localName.equalsIgnoreCase("item")) 
-			{
+		if (mTmpNewsItem != null) {
+			if(localName.equalsIgnoreCase("item")) {
 				// TODO: Copy the mTmpNewsImage (not just reference)
 				mNewsCategory.mItemFeedMap.put(mTmpNewsItem.mSummary, mTmpNewsItem.clone());
 				mTmpNewsItem = null;
 			}
-			else if(localName.equalsIgnoreCase("title"))
-			{
+			else if(localName.equalsIgnoreCase("title")) {
 				mTmpNewsItem.mSource = NewsItem.getSource(mTmpText);
 				mTmpNewsItem.mSummary = NewsItem.getSummary(mTmpText);
 			}
@@ -164,10 +205,8 @@ public class XmlHelperNews extends DefaultHandler {
 			else if(localName.equalsIgnoreCase("description"))
 				mTmpNewsItem.mThumbImageLink = NewsItem.parseThumbLink(mTmpText);
 		}
-		else if (mTmpNewsImage != null)
-		{
-			if(localName.equalsIgnoreCase("image")) 
-			{
+		else if (mTmpNewsImage != null) {
+			if(localName.equalsIgnoreCase("image")) {
 				// TODO: Copy the mTmpNewsImage (not just reference)
 				mNewsCategory.mNewsImage = mTmpNewsImage.clone();
 				mTmpNewsImage = null;
@@ -179,8 +218,7 @@ public class XmlHelperNews extends DefaultHandler {
 			else if(localName.equalsIgnoreCase("link"))
 				mTmpNewsImage.mLink = mTmpText;
 		}
-		else // Contents of Main News Feed (i.e., "channel")
-		{
+		else { // Contents of Main News Feed (i.e., "channel")
 			if(localName.equalsIgnoreCase("title")) 
 				mNewsCategory.mTitle = mTmpText;
 			else if (localName.equalsIgnoreCase("link"))
@@ -198,5 +236,6 @@ public class XmlHelperNews extends DefaultHandler {
 		}
 		// reset text
 		mTmpText = "";
-	}
-}
+	} //endElement()
+	
+} //class XmlHelperNews

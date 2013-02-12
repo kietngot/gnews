@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/ivInfoAppIcon"
         android:layout_centerHorizontal="true"
-        android:text="Version 1.0"
+        android:text="Version 1.0.4"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/darkgray" 
 		android:textSize="12dp" />
