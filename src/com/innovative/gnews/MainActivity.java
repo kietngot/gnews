@@ -94,7 +94,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 	
 	ListView mNewsItemsList = null;
 	List<NewsItem> mNewsList = null;
-	String mTitleText = "";
+	String mTitleText = "Gnews";
 	//boolean mJavascriptEnabled = false;
 	Category mCountryLoaded = null;
 	Category mCategoryLoaded = null;
@@ -137,7 +137,6 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		
 	}
 	
-	boolean showOption1 = false;
 	private void animateToggleCategoriesMenu()
 	{
 	    Animation anim;
@@ -217,81 +216,15 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         
-        mTitleText = "Gnews"; //getString(R.string.loading);
+        createUIControls();
+        setListeners();
+        initUI();
+        initDBAndSettings();
         
-		tvNewsItemsLoading = (TextView)findViewById(R.id.tvNewsItemsLoading);
-		if (tvNewsItemsLoading!=null)
-		{
-			tvNewsItemsLoading.setText(R.string.loading);
-			tvNewsItemsLoading.setVisibility(View.VISIBLE);
-		}
-		mNewsItemsList = (ListView) findViewById(R.id.lvNewsItemsList);
-		mNewsList = new ArrayList<NewsItem>();
-		mNewsItemsAdapter = new NewsItemListAdapter(this, R.layout.newsitem_view, mNewsList);
-		mNewsItemsList.setAdapter(mNewsItemsAdapter);
-		mNewsItemsList.setClickable(true);
-		//mNewsItemsList.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-		mNewsItemsList.setOnItemClickListener(mListItemClickListener);
-		
-		// Categories controls
-		spnCountryFeed = (Spinner)findViewById(R.id.spnCountryFeedList);
-		if (spnCountryFeed!=null)
-		{
-			spnCountryFeed.setVisibility(View.INVISIBLE);
-		}
-		
-		tvCountrySpinnerLbl = (TextView) findViewById(R.id.tvCountrySpinnerLbl);
-		if (tvCountrySpinnerLbl != null)
-		{
-			tvCountrySpinnerLbl.setVisibility(View.VISIBLE);
-			tvCountrySpinnerLbl.setOnClickListener(mBtnClickListener);
-		}
-		
-		rlMainTitle = (RelativeLayout) findViewById(R.id.rlMainTitle);
-        if (rlMainTitle!=null)
-        	rlMainTitle.setOnClickListener(mBtnClickListener);
-		
-        ibMenuImg = (ImageButton) findViewById(R.id.ibMenuImg);
-        if (ibMenuImg!=null)
-        	ibMenuImg.setOnClickListener(mBtnClickListener);
-        
-        ibDeveloperInfo = (ImageButton) findViewById(R.id.ibDeveloperInfo);
-		if (ibDeveloperInfo!=null)
-			ibDeveloperInfo.setOnClickListener(mBtnClickListener);
-        
-        ibPersonalCategoriesAdd = (ImageButton) findViewById(R.id.ibPersonalCategoriesAdd);
-        if (ibPersonalCategoriesAdd!=null)
-        	ibPersonalCategoriesAdd.setOnClickListener(mBtnClickListener);
-        
-        tvTitle = (TextView) findViewById(R.id.tvAppTitle);
-        if (tvTitle!=null)
-        	tvTitle.setText(mTitleText);
-		
-		rlMenuCategories = (RelativeLayout) findViewById(R.id.rlMenuCategories);
-    	rlMainNewsList = (RelativeLayout) findViewById(R.id.rlMainNewsList);
-		if (rlMainNewsList!=null)
-			rlMainNewsList.setOnTouchListener(mOnTouchListener);
-		
-		lvPreconfiguredCategories = (ListView) findViewById(R.id.lvPreconfiguredCategories);
-		lvPersonalCategories = (ListView) findViewById(R.id.lvPersonalCategories);
-		tvPersonalCategoriesHint = (TextView) findViewById(R.id.tvPersonalCategoriesHint); 
-		
-		ibRefreshNews = (ImageButton) findViewById(R.id.ibRefreshNews);
-		if (ibRefreshNews!=null)
-			ibRefreshNews.setOnClickListener(mBtnClickListener);
-		
-		
-		// Register the context menu
-		registerForContextMenu(lvPersonalCategories);
-		
-		// Open database
-		mDb = GnewsDatabase.getDatabase(this);
-		if (mDb!=null && mDb.open())
-		{
-			// Initialize settings
-			String jsEnabledStr = mDb.getSetting("JavaScriptEnabled");
-			AppSettings.JavascriptEnabled = (Integer.parseInt(jsEnabledStr)==0)?false:true;
-		}
+        prepareCategoriesMap();
+		loadCountryFeedList();
+		loadPersonalCategories();
+		loadCategoriesList();
 		
 		// TODO: Tried to get current country from GPS location, but its tricky to match with country names
 		//	that we have. Like "U.S" doesn't match with "US" or "United States".
@@ -299,14 +232,93 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
 		// This needs android.permission.ACCESS_FINE_LOCATION.
 		//AppSettings.updateCurrentCountry(this);
 		
-		// Menu items
-		prepareCategoriesMap();
-		loadCountryFeedList();
-		loadPersonalCategories();
-		loadCategoriesList();
-		
 		// load news
 		loadNews();
+    }
+    
+    private void initDBAndSettings()
+    {
+    	// Open database
+		mDb = GnewsDatabase.getDatabase(this);
+		if (mDb!=null && mDb.open())
+		{
+			// Initialize settings
+			String jsEnabledStr = mDb.getSetting("JavaScriptEnabled");
+			AppSettings.JavascriptEnabled = (Integer.parseInt(jsEnabledStr)==0)?false:true;
+		}
+    }
+    
+    private void createUIControls() 
+    {
+    	tvNewsItemsLoading = (TextView)findViewById(R.id.tvNewsItemsLoading);
+		mNewsItemsList = (ListView) findViewById(R.id.lvNewsItemsList);
+		spnCountryFeed = (Spinner)findViewById(R.id.spnCountryFeedList);
+		tvCountrySpinnerLbl = (TextView) findViewById(R.id.tvCountrySpinnerLbl);
+		rlMainTitle = (RelativeLayout) findViewById(R.id.rlMainTitle);
+        ibMenuImg = (ImageButton) findViewById(R.id.ibMenuImg);
+        ibDeveloperInfo = (ImageButton) findViewById(R.id.ibDeveloperInfo);
+        ibPersonalCategoriesAdd = (ImageButton) findViewById(R.id.ibPersonalCategoriesAdd);
+        tvTitle = (TextView) findViewById(R.id.tvAppTitle);
+		rlMenuCategories = (RelativeLayout) findViewById(R.id.rlMenuCategories);
+    	rlMainNewsList = (RelativeLayout) findViewById(R.id.rlMainNewsList);
+		lvPreconfiguredCategories = (ListView) findViewById(R.id.lvPreconfiguredCategories);
+		lvPersonalCategories = (ListView) findViewById(R.id.lvPersonalCategories);
+		tvPersonalCategoriesHint = (TextView) findViewById(R.id.tvPersonalCategoriesHint); 
+		ibRefreshNews = (ImageButton) findViewById(R.id.ibRefreshNews);
+    }
+    
+    private void setListeners()
+    {
+    	if (mNewsItemsList!=null)
+			mNewsItemsList.setOnItemClickListener(mListItemClickListener);
+		if (tvCountrySpinnerLbl!=null)
+			tvCountrySpinnerLbl.setOnClickListener(mBtnClickListener);
+        if (rlMainTitle!=null)
+        	rlMainTitle.setOnClickListener(mBtnClickListener);
+        if (ibMenuImg!=null)
+        	ibMenuImg.setOnClickListener(mBtnClickListener);
+        if (ibDeveloperInfo!=null)
+			ibDeveloperInfo.setOnClickListener(mBtnClickListener);
+        if (ibPersonalCategoriesAdd!=null)
+        	ibPersonalCategoriesAdd.setOnClickListener(mBtnClickListener);
+		if (rlMainNewsList!=null)
+			rlMainNewsList.setOnTouchListener(mOnTouchListener);
+		if (ibRefreshNews!=null)
+			ibRefreshNews.setOnClickListener(mBtnClickListener);
+		if (lvPreconfiguredCategories!=null)
+			lvPreconfiguredCategories.setOnItemClickListener(onCategoriesClick);
+    }
+    
+    private void initUI()
+    {
+    	if (tvTitle!=null)
+        	tvTitle.setText(mTitleText);
+    	
+    	if (tvNewsItemsLoading!=null)
+		{
+			tvNewsItemsLoading.setText(R.string.loading);
+			tvNewsItemsLoading.setVisibility(View.VISIBLE);
+		}
+    	
+    	// Initialize news list with adapter
+		mNewsList = new ArrayList<NewsItem>();
+		mNewsItemsAdapter = new NewsItemListAdapter(this, R.layout.newsitem_view, mNewsList);
+		mNewsItemsList.setAdapter(mNewsItemsAdapter);
+		mNewsItemsList.setClickable(true);
+		
+		// Country...
+		if (spnCountryFeed!=null)
+			spnCountryFeed.setVisibility(View.INVISIBLE);
+		if (tvCountrySpinnerLbl != null)
+			tvCountrySpinnerLbl.setVisibility(View.VISIBLE);
+		
+		// Categories controls
+		mAdapterCategory = new ArrayAdapter<Category>(this, R.layout.categories_item);
+		lvPreconfiguredCategories.setAdapter(mAdapterCategory);
+		
+		// Register the context menu
+		if (lvPersonalCategories!=null)
+			registerForContextMenu(lvPersonalCategories);
     }
     
     @Override
@@ -477,7 +489,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     	if (lvPreconfiguredCategories != null && mCategories!=null)
     	{
     		//mAdapterCategory = new ArrayAdapter<Category>(this, android.R.layout.simple_list_item_checked);
-    		mAdapterCategory = new ArrayAdapter<Category>(this, R.layout.categories_item);
+    		
     		for (String key : mCategories.keySet())
     		{
     			Category category = mCategories.get(key);
@@ -485,8 +497,7 @@ public class MainActivity extends Activity implements NewsLoadEvents, AnimationL
     				mAdapterCategory.add(category);
     		}
     		mAdapterCategory.setNotifyOnChange(true);
-    		lvPreconfiguredCategories.setAdapter(mAdapterCategory);
-    		lvPreconfiguredCategories.setOnItemClickListener(onCategoriesClick);
+    		
     		// Commenting this to make it work in API-10 as well.
     		//lvPreconfiguredCategories.setSelector(R.drawable.list_selector);
     		lvPreconfiguredCategories.setSelected(true);

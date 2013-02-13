@@ -54,12 +54,6 @@ public class NewsPageActivity extends Activity {
 		doLoadPage();
     } //onCreate()
 	
-	@Override
-	public void onStart() 
-	{
-		super.onStart();
-	}
-	
 	private void doLoadPage()
 	{
 		if (!Utils.checkInternetConnection(this, true, tvPageLoading))
